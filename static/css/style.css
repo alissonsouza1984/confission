@@ -96,3 +96,12 @@ blockquote {
   font-style: italic;
   color: #4a3820;
 }
+.list-group-item {
+  border: none;
+  color: #333;
+  padding-left: 0;
+}
+
+.list-group-flush .list-group-item {
+  border-width: 0;
+}

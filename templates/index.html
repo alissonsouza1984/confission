@@ -43,7 +43,34 @@
   <source src="{{ url_for('static', filename='audio/miserere_mei_deus.mp3') }}" type="audio/mpeg">
   Seu navegador não suporta o elemento de áudio.
 </audio>
+<!-- Seção: Pecados Capitais -->
+<div class="card mb-4">
+  <div class="card-header fw-bold section-title">🩸 Os Sete Pecados Capitais</div>
+  <div class="card-body">
+    <p class="mb-3">Os sete pecados capitais são raízes de outros pecados. Conhecê-los ajuda a identificar melhor as tendências do coração para fazer um exame de consciência mais profundo.</p>
 
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><strong>Orgulho:</strong> Amor desordenado de si mesmo, inimigo da humildade.</li>
+      <li class="list-group-item"><strong>Avareza:</strong> Apego excessivo às riquezas, contrária à generosidade.</li>
+      <li class="list-group-item"><strong>Luxúria:</strong> Desejo desregrado do prazer sexual, contrário à castidade.</li>
+      <li class="list-group-item"><strong>Ira:</strong> Ódio ou desejo de vingança, contrário à paciência.</li>
+      <li class="list-group-item"><strong>Gula:</strong> Comer e beber em excesso, contrário à temperança.</li>
+      <li class="list-group-item"><strong>Inveja:</strong> Dor com o bem do próximo, contrária à caridade.</li>
+      <li class="list-group-item"><strong>Preguiça:</strong> Aversão à vida espiritual e ao trabalho, contrária à diligência.</li>
+    </ul>
+
+    <h5 class="mt-4">📌 Virtudes que combatem os pecados:</h5>
+    <ul class="list-group list-group-flush mt-2">
+      <li class="list-group-item">Humildade → Combate o orgulho</li>
+      <li class="list-group-item">Generosidade → Combate a avareza</li>
+      <li class="list-group-item">Castidade → Combate a luxúria</li>
+      <li class="list-group-item">Paciência → Combate a ira</li>
+      <li class="list-group-item">Temperança → Combate a gula</li>
+      <li class="list-group-item">Caridade → Combate a inveja</li>
+      <li class="list-group-item">Diligência → Combate a preguiça</li>
+    </ul>
+  </div>
+</div>
 <!-- Conteúdo Principal -->
 <div class="container my-5">
   <div class="icon">
@@ -172,6 +199,89 @@
     `;
 
     this.submit();
+  });
+</script>
+<!-- Botão Flutuante -->
+<style>
+  .floating-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #d4af37;
+    color: #4a3820;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 9999;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .floating-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .dropdown-menu {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    z-index: 9998;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: 250px;
+  }
+
+  .dropdown-item {
+    text-decoration: none;
+    color: #4a3820;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #fffef8;
+    border: 1px solid #d4af37;
+    transition: all 0.2s ease;
+  }
+
+  .dropdown-item:hover {
+    background-color: #b38c1a;
+    color: white;
+  }
+</style>
+
+<button id="floatingBtn" class="floating-btn">📖</button>
+<div id="dropdownMenu" class="dropdown-menu">
+  <a href="/oracoes#1" class="dropdown-item">Oração do Arrependimento</a>
+  <a href="/oracoes#2" class="dropdown-item">Confissão Geral</a>
+  <a href="/oracoes#3" class="dropdown-item">Miserere Mei Deus</a>
+  <a href="/oracoes#4" class="dropdown-item">Do Profundo</a>
+  <a href="/oracoes#5" class="dropdown-item">Salmo 6</a>
+  <a href="/oracoes#6" class="dropdown-item">Acto de Contrição</a>
+  <a href="/oracoes#7" class="dropdown-item">Oração à Virgem Maria</a>
+</div>
+
+<script>
+  const btn = document.getElementById('floatingBtn');
+  const dropdown = document.getElementById('dropdownMenu');
+
+  btn.addEventListener('click', () => {
+    dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+  });
+
+  window.addEventListener('click', (e) => {
+    if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.style.display = 'none';
+    }
   });
 </script>
 </body>
