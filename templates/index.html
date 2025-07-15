@@ -1,65 +1,73 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Exame de Consciência - Pecados</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <meta charset="UTF-8">
+    <title>🧾 Exame de Consciência</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Estilos Bootstrap CDN (Render suporta sem problemas) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 2rem;
+        }
+        textarea {
+            resize: vertical;
+        }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Exame de Consciência - Selecione seus pecados</h1>
+<body class="container">
+    <h1 class="mb-4 text-center">🧾 Exame de Consciência</h1>
 
-        <form method="POST" action="/">
-            {% for mandamento, lista in pecados.items() %}
-                <fieldset>
-                    <legend>{{ mandamento }}</legend>
-                    {% for i, pecado in enumerate(lista) %}
-                        <label class="pecado-item">
-                            <input type="checkbox" name="{{ mandamento }}" value="{{ i }}" />
-                            {{ pecado }}
-                        </label>
-                    {% endfor %}
-                </fieldset>
-            {% endfor %}
+    <form method="POST">
+        {% for mandamento, lista in pecados.items() %}
+            <div class="mb-4">
+                <h5 class="text-primary">{{ mandamento }}</h5>
+                {% for pecado in lista %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="{{ mandamento }}" value="{{ loop.index0 }}" id="{{ mandamento }}-{{ loop.index0 }}">
+                        <label class="form-check-label" for="{{ mandamento }}-{{ loop.index0 }}">{{ pecado }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
 
-            <fieldset>
-                <legend>Outros pecados (escreva aqui):</legend>
-                <textarea name="custom" placeholder="Digite aqui outros pecados..." rows="4"></textarea>
-            </fieldset>
+        <div class="mb-4">
+            <label for="custom" class="form-label fw-bold">Outros pecados (personalizados):</label>
+            <textarea class="form-control" id="custom" name="custom" rows="3" placeholder="Digite aqui..."></textarea>
+        </div>
 
-            <button type="submit" class="btn">Gerar Resultado</button>
+        <div class="d-flex flex-column flex-md-row gap-3">
+            <button type="submit" class="btn btn-success">Gerar PDF</button>
+            <a href="/" class="btn btn-secondary">Limpar seleção</a>
+        </div>
+    </form>
+
+    {% if resultado %}
+        <hr class="my-5">
+        <h3 class="text-success">📋 Pecados selecionados</h3>
+        <form action="{{ url_for('download') }}" method="POST">
+            <div id="conteudo" class="mb-3">
+                {% for mandamento, pecados_selecionados in resultado.items() %}
+                    <h5 class="mt-4">{{ mandamento }}</h5>
+                    <ul>
+                        {% for p in pecados_selecionados %}
+                            <li>{{ p }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
+
+            <!-- Envia conteúdo HTML para o PDF -->
+            <input type="hidden" name="html_conteudo" id="html_conteudo">
+            <button type="submit" class="btn btn-primary mt-3">📥 Baixar PDF</button>
         </form>
 
-        {% if resultado %}
-        <hr />
-        <h2>Resultado dos pecados selecionados:</h2>
-        <div id="resultado-html">
-            <form method="POST" action="/download" id="form-download">
-                <pre style="white-space: pre-wrap;">
-{% for mandamento, pecados_sel in resultado.items() %}
-<strong>{{ mandamento }}:</strong>
-{% for p in pecados_sel %}
-- {{ p }}
-{% endfor %}
-{% endfor %}
-                </pre>
-                <input type="hidden" name="html_conteudo" id="html_conteudo" />
-                <button type="submit" class="btn">Baixar PDF</button>
-            </form>
-        </div>
-        {% endif %}
-    </div>
-
-    <script>
-        // Preenche o input hidden com o conteúdo do resultado para enviar no PDF
-        const formDownload = document.getElementById('form-download');
-        if(formDownload){
-            formDownload.addEventListener('submit', function(e){
-                const resultadoDiv = document.getElementById('resultado-html');
-                document.getElementById('html_conteudo').value = resultadoDiv.innerHTML;
+        <script>
+            // Preenche o campo oculto com o HTML visível
+            document.querySelector("form[action='{{ url_for('download') }}']").addEventListener("submit", function () {
+                document.getElementById("html_conteudo").value = document.getElementById("conteudo").innerHTML;
             });
-        }
-    </script>
+        </script>
+    {% endif %}
 </body>
 </html>
