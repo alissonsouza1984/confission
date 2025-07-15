@@ -80,3 +80,19 @@ textarea.form-control {
   color: #4a3820;
   resize: vertical;
 }
+.audio-player {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.audio-player audio {
+  border: 2px solid #d4af37;
+  border-radius: 8px;
+  padding: 8px;
+  background-color: #fffef8;
+}
+
+blockquote {
+  font-style: italic;
+  color: #4a3820;
+}

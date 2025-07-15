@@ -24,6 +24,25 @@
   </style>
 </head>
 <body class="page-body">
+<!-- Seção de cântico de misericórdia -->
+<div class="intro-section text-center my-4">
+  <h2 class="section-title">℣. Tende piedade de mim, ó Deus...</h2>
+  <p class="lead">Miserere Mei, Deus — Salmo 50</p>
+
+  <!-- Áudio embutido -->
+  <div class="audio-player my-3">
+    <audio controls autoplay loop class="w-100">
+      <source src="{{ url_for('static', filename='audio/miserere_mei_deus.mp3') }}" type="audio/mpeg">
+      Seu navegador não suporta o elemento de áudio.
+    </audio>
+  </div>
+
+  <blockquote class="blockquote">
+    <p>"Cria em mim, ó Deus, um coração puro,<br>
+       e renova dentro de mim um espírito reto."</p>
+    <footer class="blockquote-footer">Salmo 50, 12</footer>
+  </blockquote>
+</div>  
   <div class="container my-5">
     <div class="icon">
       <img src="{{ url_for('static', filename='img/cristo_pantocrator.jpg') }}" alt="Cristo Pantocrator" />

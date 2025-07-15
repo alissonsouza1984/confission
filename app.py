@@ -6,108 +6,132 @@ app = Flask(__name__)
 
 pecados = {
     "1. Amar a Deus sobre todas as coisas": [
-        "Negligência na oração diária",
-        "Dúvidas sobre a fé e críticas aos ensinamentos da Igreja",
-        "Desânimo espiritual e revolta contra Deus",
-        "Frequentar cultos ou práticas supersticiosas (ex: cartomantes, horóscopos)",
-        "Buscar glória pessoal acima da vontade de Deus",
-        "Orgulho, vaidade ou apego a elogios",
-        "Apego excessivo ao dinheiro e aos bens materiais"
+        "Negligenciei minha oração diária",
+        "Tive dúvidas sobre a fé e critiquei os ensinamentos da Igreja",
+        "Senti desânimo espiritual e me revoltei contra Deus",
+        "Frequentei cultos ou práticas supersticiosas (ex: cartomantes, horóscopos)",
+        "Busquei minha própria glória em vez da vontade de Deus",
+        "Fui orgulhoso, vaidoso ou apegado a elogios",
+        "Apeguei-me excessivamente ao dinheiro e aos bens materiais",
+        "Fui impaciente e pouco tolerante com os outros",
+        "Fui indiferente diante do sofrimento alheio",
+        "Faltou-me empatia e amor ao próximo",
+        "Levei outros ao pecado com meus conselhos, atitudes ou exemplos",
+        "Ignorei oportunidades de praticar caridade"
     ],
     "2. Não tomar o nome de Deus em vão": [
-        "Usar o nome de Deus ou dos santos de forma desrespeitosa",
-        "Ridicularizar símbolos da fé ou religiosos",
-        "Fazer promessas sem intenção de cumprir",
-        "Juramentos falsos ou desnecessários",
-        "Permitir ou rir quando outros zombam da fé"
+        "Usei o nome de Deus ou dos santos de forma desrespeitosa",
+        "Ridicularizei símbolos da fé ou religiosos",
+        "Fiz promessas sem intenção de cumprir",
+        "Fiz juramentos falsos ou desnecessários",
+        "Permiti ou ri quando outros zombaram da fé",
+        "Usei expressões religiosas com banalidade ou em vão"
     ],
     "3. Guardar domingos e festas de guarda": [
-        "Faltar à missa dominical ou em dias santos sem necessidade grave",
-        "Chegar intencionalmente atrasado à missa ou sair antes da bênção final",
-        "Comungar em pecado mortal",
-        "Deixar de se confessar ao menos uma vez ao ano",
-        "Não jejuar ou não fazer abstinência quando mandado pela Igreja",
-        "Negligenciar a ajuda material à Igreja"
+        "Faltei à missa dominical ou em dias santos sem necessidade grave",
+        "Cheguei intencionalmente atrasado à missa ou saí antes da bênção final",
+        "Comunguei estando em pecado mortal",
+        "Deixei de me confessar ao menos uma vez ao ano",
+        "Não jejuei ou não fiz abstinência quando mandado pela Igreja",
+        "Negligenciei a ajuda material à Igreja",
+        "Fui à missa por obrigação, sem esforço de viver a fé no dia a dia"
     ],
     "4. Honrar pai e mãe": [
-        "Desobediência e falta de respeito aos pais ou superiores",
-        "Negligência nos cuidados com os pais idosos ou doentes",
-        "Maltrato ao cônjuge em palavras ou atitudes",
-        "Dar mau exemplo aos filhos",
-        "Permitir influência negativa sobre os filhos (TV, internet, amizades)",
-        "Negligência na formação religiosa dos filhos",
-        "Deixar de corrigir os filhos por comodismo"
+        "Desobedeci e faltei com respeito aos meus pais ou superiores",
+        "Negligenciei os cuidados com meus pais idosos ou doentes",
+        "Maltratei meu cônjuge com palavras ou atitudes",
+        "Dei mau exemplo aos meus filhos",
+        "Permiti influências negativas sobre meus filhos (TV, internet, amizades)",
+        "Fui negligente na formação religiosa dos meus filhos",
+        "Deixei de corrigir meus filhos por comodismo",
+        "Fui ingrato com meus pais ou avós"
     ],
     "5. Não matar": [
-        "Ódio, rancor, inimizade ou desejo de vingança",
-        "Falta de perdão",
-        "Desejar a morte ou o mal a alguém (ou a si mesmo)",
-        "Aborto, eutanásia ou apoio a essas práticas",
-        "Descuido com a saúde (excesso de comida, drogas, bebida, sedentarismo)",
-        "Riscos desnecessários à vida (direção imprudente, vícios)",
-        "Dar escândalo ou mau exemplo"
+        "Alimentei ódio, rancor, inimizade ou desejo de vingança",
+        "Recusei-me a perdoar",
+        "Desejei a morte ou o mal a alguém (ou a mim mesmo)",
+        "Apoiei ou pratiquei aborto, eutanásia ou outras práticas semelhantes",
+        "Fui descuidado com minha saúde (excesso de comida, drogas, bebida, sedentarismo)",
+        "Assumi riscos desnecessários à minha vida (direção imprudente, vícios)",
+        "Dei escândalo ou mau exemplo",
+        "Proferi palavrões ou palavras agressivas contra os outros",
+        "Feri emocionalmente alguém com minhas palavras ou atitudes",
+        "Fui violento, mesmo verbalmente, com pessoas próximas"
     ],
     "6. Não pecar contra a castidade": [
-        "Pensamentos ou desejos impuros voluntários",
-        "Masturbação, pornografia, sexo fora do casamento",
-        "Infidelidade emocional ou física",
-        "Liberdades excessivas no namoro",
-        "Usar roupas provocativas com intenção",
-        "Conversas ou piadas imorais",
-        "Consumir conteúdo sexualizado (TV, filmes, redes sociais)",
-        "Amizades que me levam ao pecado"
+        "Consenti em pensamentos ou desejos impuros",
+        "Me masturbei, assisti pornografia ou tive relações sexuais fora do casamento",
+        "Fui infiel emocionalmente ou fisicamente",
+        "Tive liberdades excessivas no namoro",
+        "Usei roupas provocativas com má intenção",
+        "Participei de conversas ou fiz piadas imorais",
+        "Consumi conteúdo sexualizado (TV, filmes, redes sociais)",
+        "Mantive amizades que me levaram ao pecado",
+        "Fiz comentários maliciosos sobre o corpo de outras pessoas",
+        "Alimentei fantasias sexuais intencionalmente"
     ],
     "7. Não roubar": [
-        "Furto, desonestidade em contratos ou negócios",
-        "Apropriar-se de bens ou dinheiro indevidamente",
-        "Não pagar dívidas justas ou salários devidos",
-        "Desperdiçar o tempo no trabalho ou trabalhar com negligência",
-        "Vício em jogos de azar",
-        "Viver acima dos próprios meios"
+        "Roubei ou fui desonesto em contratos ou negócios",
+        "Me apropriei de bens ou dinheiro indevidamente",
+        "Deixei de pagar dívidas justas ou salários devidos",
+        "Desperdicei tempo no trabalho ou trabalhei com negligência",
+        "Fui viciado em jogos de azar",
+        "Vivi acima dos meus meios",
+        "Fui injusto ao cobrar ou receber valores excessivos",
+        "Usei benefícios ou ajudas indevidamente"
     ],
     "8. Não levantar falso testemunho": [
-        "Mentira habitual, mesmo sem prejudicar diretamente",
-        "Calúnia, difamação ou exagerar defeitos dos outros",
-        "Ouvir ou espalhar boatos",
-        "Julgar mal ou condenar injustamente alguém",
-        "Causar divisão entre pessoas por fofoca",
-        "Não reparar a má reputação causada por mim"
+        "Menti habitualmente, mesmo sem prejudicar diretamente",
+        "Caluniei, difamei ou exagerei defeitos dos outros",
+        "Ouvi ou espalhei boatos",
+        "Julguei mal ou condenei injustamente alguém",
+        "Causei divisão entre pessoas por fofoca",
+        "Não reparei a má reputação causada por mim",
+        "Fui hipócrita ou dissimulado para parecer melhor"
     ],
     "9. Não desejar a mulher do próximo": [
-        "Desejos impuros por pessoa casada ou consagrada",
-        "Fantasias ou intenções de infidelidade",
-        "Assédio verbal ou físico",
-        "Flertes com pessoas comprometidas",
-        "Curiosidade indevida sobre a intimidade alheia"
+        "Alimentei desejos impuros por pessoas casadas ou consagradas",
+        "Tive fantasias ou intenções de infidelidade",
+        "Assediei verbal ou fisicamente",
+        "Flertei com pessoas comprometidas",
+        "Tive curiosidade indevida sobre a intimidade de outras pessoas",
+        "Usei o olhar de maneira impura ou desrespeitosa"
     ],
     "10. Não cobiçar as coisas alheias": [
-        "Invejar os bens, sucesso ou talentos dos outros",
-        "Desejo de tomar ou imitar o que pertence a outro",
-        "Descontentamento com a própria vida por comparação"
+        "Invejei os bens, o sucesso ou os talentos dos outros",
+        "Desejei tomar ou imitar aquilo que pertence a outros",
+        "Fiquei descontente com a minha vida por causa de comparações",
+        "Fui ambicioso em excesso, sem gratidão pelo que tenho",
+        "Desejei viver a vida dos outros em vez de valorizar a minha"
     ],
     "Mandamentos da Igreja": [
-        "Faltar à Missa em festas de guarda",
-        "Não confessar-se ao menos uma vez por ano",
-        "Não comungar na Páscoa",
-        "Comungar em pecado grave",
-        "Não guardar jejum e abstinência nos tempos prescritos",
-        "Não ajudar a Igreja materialmente"
+        "Faltei à Missa em festas de guarda",
+        "Não me confessei ao menos uma vez por ano",
+        "Não comunguei na Páscoa",
+        "Comunguei em pecado grave",
+        "Não guardei jejum e abstinência nos tempos prescritos",
+        "Não ajudei a Igreja materialmente",
+        "Desprezei os sacramentos por comodismo ou frieza espiritual"
     ],
     "Pecados relacionados ao casamento e à família": [
-        "Negligência com o cônjuge (diálogo, carinho, atenção)",
-        "Violência física ou verbal dentro do lar",
-        "Desrespeito mútuo entre os cônjuges",
-        "Falta de perdão no matrimônio",
-        "Priorizar trabalho ou lazer em detrimento da família",
-        "Não se abrir à vida (rejeitar filhos sem justa causa)",
-        "Não dar testemunho cristão dentro do lar"
+        "Fui negligente com meu cônjuge (no diálogo, carinho ou atenção)",
+        "Fui violento física ou verbalmente dentro do lar",
+        "Desrespeitei meu cônjuge",
+        "Guardei mágoas e não perdoei no matrimônio",
+        "Priorizei trabalho ou lazer em detrimento da família",
+        "Recusei-me a ter filhos sem justa causa",
+        "Não dei testemunho cristão dentro do lar",
+        "Fui indiferente à vida familiar ou às necessidades dos meus",
+        "Usei palavras ofensivas ou humilhantes com meus familiares"
     ],
     "Pecados espirituais e morais": [
-        "Preguiça espiritual (não buscar crescer na fé)",
-        "Desinteresse pelas coisas de Deus",
-        "Falta de zelo apostólico (não evangelizar, não ajudar os outros na fé)",
-        "Conformismo com o pecado próprio ou alheio",
-        "Buscar o sucesso pessoal acima da vontade divina"
+        "Fui preguiçoso espiritualmente (não busquei crescer na fé)",
+        "Me desinteressei pelas coisas de Deus",
+        "Fui indiferente no zelo apostólico (não evangelizei, nem ajudei outros na fé)",
+        "Fui conivente com o pecado, meu ou alheio",
+        "Busquei o sucesso pessoal acima da vontade divina",
+        "Agi por egoísmo, pensando apenas em mim",
+        "Fui omisso diante de injustiças ou sofrimentos ao meu redor"
     ]
 }
 
