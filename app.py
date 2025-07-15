@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, Response, url_for
 from weasyprint import HTML
+from weasyprint.fonts import FontConfiguration
 from io import BytesIO
 
 app = Flask(__name__)
@@ -133,17 +134,16 @@ def download():
     if not html_renderizado:
         return "Conteúdo vazio para gerar PDF", 400
 
+    font_config = FontConfiguration()
     pdf_io = BytesIO()
-    HTML(string=html_renderizado, base_url=request.root_url).write_pdf(pdf_io)
+    HTML(string=html_renderizado, base_url=request.root_url).write_pdf(pdf_io, font_config=font_config)
     pdf_io.seek(0)
 
     return Response(pdf_io.read(),
                     mimetype="application/pdf",
                     headers={"Content-Disposition": "attachment;filename=meus_pecados.pdf"})
 
-import os
-
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
+    import os
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
