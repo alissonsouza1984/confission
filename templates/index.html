@@ -10,91 +10,107 @@
       .container {
         padding: 1rem;
       }
-
       textarea.form-control {
         width: 100% !important;
         font-size: 1rem;
       }
-
       .btn {
         width: 100%;
         font-size: 1rem;
       }
     }
+
+    .audio-player {
+      display: none;
+      margin: 1rem auto;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    .audio-player audio {
+      width: 100%;
+      border: 2px solid #d4af37;
+      border-radius: 8px;
+      padding: 8px;
+      background-color: #fffef8;
+    }
   </style>
 </head>
 <body class="page-body">
-<!-- Seção de cântico de misericórdia -->
-<div class="intro-section text-center my-4">
-  <h2 class="section-title">℣. Tende piedade de mim, ó Deus...</h2>
-  <p class="lead">Miserere Mei, Deus — Salmo 50</p>
 
-  <!-- Áudio embutido -->
-  <div class="audio-player my-3">
-    <audio controls autoplay loop class="w-100">
-      <source src="{{ url_for('static', filename='audio/miserere_mei_deus.mp3') }}" type="audio/mpeg">
-      Seu navegador não suporta o elemento de áudio.
-    </audio>
+<!-- Player de Áudio Oculto -->
+<audio id="audio" loop>
+  <source src="{{ url_for('static', filename='audio/miserere_mei_deus.mp3') }}" type="audio/mpeg">
+  Seu navegador não suporta o elemento de áudio.
+</audio>
+
+<!-- Conteúdo Principal -->
+<div class="container my-5">
+  <div class="icon">
+    <img src="{{ url_for('static', filename='img/cristo_pantocrator.jpg') }}" alt="Cristo Pantocrator" />
   </div>
-
-  <blockquote class="blockquote">
-    <p>"Cria em mim, ó Deus, um coração puro,<br>
-       e renova dentro de mim um espírito reto."</p>
-    <footer class="blockquote-footer">Salmo 50, 12</footer>
-  </blockquote>
-</div>  
-  <div class="container my-5">
-    <div class="icon">
-      <img src="{{ url_for('static', filename='img/cristo_pantocrator.jpg') }}" alt="Cristo Pantocrator" />
-    </div>
-    <h1 class="title">📜 Exame de Consciência</h1>
-
-    <form method="POST" id="form-pecados">
-      {% for mandamento, lista in pecados.items() %}
-      <div class="card mb-3 card-section">
-        <div class="card-header fw-bold section-title">{{ mandamento }}</div>
-        <div class="card-body">
-          {% for pecado in lista %}
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="{{ mandamento }}" value="{{ loop.index0 }}" id="{{ mandamento }}-{{ loop.index0 }}" />
-            <label class="form-check-label" for="{{ mandamento }}-{{ loop.index0 }}">{{ pecado }}</label>
-          </div>
-          {% endfor %}
+  <h1 class="title">📜 Exame de Consciência</h1>
+  <form method="POST" id="form-pecados">
+    {% for mandamento, lista in pecados.items() %}
+    <div class="card mb-3 card-section">
+      <div class="card-header fw-bold section-title">{{ mandamento }}</div>
+      <div class="card-body">
+        {% for pecado in lista %}
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="{{ mandamento }}" value="{{ loop.index0 }}" id="{{ mandamento }}-{{ loop.index0 }}" />
+          <label class="form-check-label" for="{{ mandamento }}-{{ loop.index0 }}">{{ pecado }}</label>
         </div>
+        {% endfor %}
       </div>
+    </div>
+    {% endfor %}
+    <div class="mb-3">
+      <label for="custom" class="form-label fw-bold">Outro(s) pecado(s) que deseja digitar:</label>
+      <textarea class="form-control" id="custom" name="custom" rows="3" placeholder="Digite livremente..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Gerar minha lista</button>
+  </form>
+  {% if resultado %}
+  <hr class="my-5" />
+  <h2 class="section-title">📄 Seus pecados selecionados:</h2>
+  <form method="POST" action="/download" id="form-download">
+    <input type="hidden" name="html_conteudo" id="html_conteudo" />
+    <ul class="list-group my-3 list-peccados">
+      {% for mandamento, lista in resultado.items() %}
+      <li class="list-group-item list-header">{{ mandamento }}</li>
+      {% for item in lista %}
+      <li class="list-group-item list-item">{{ item }}</li>
       {% endfor %}
-
-      <div class="mb-3">
-        <label for="custom" class="form-label fw-bold">Outro(s) pecado(s) que deseja digitar:</label>
-        <textarea class="form-control" id="custom" name="custom" rows="3" placeholder="Digite livremente..."></textarea>
-      </div>
-
-      <button type="submit" class="btn btn-primary">Gerar minha lista</button>
-
-    </form>
-
-    {% if resultado %}
-    <hr class="my-5" />
-    <h2 class="section-title">📄 Seus pecados selecionados:</h2>
-    <form method="POST" action="/download" id="form-download">
-      <input type="hidden" name="html_conteudo" id="html_conteudo" />
-
-      <ul class="list-group my-3 list-peccados">
-        {% for mandamento, lista in resultado.items() %}
-        <li class="list-group-item list-header">{{ mandamento }}</li>
-        {% for item in lista %}
-        <li class="list-group-item list-item">{{ item }}</li>
-        {% endfor %}
-        {% endfor %}
-      </ul>
-
-      <button type="submit" class="btn btn-success">📅 Baixar lista como PDF</button>
-
-    </form>
-    {% endif %}
-  </div>
+      {% endfor %}
+    </ul>
+    <button type="submit" class="btn btn-success">📅 Baixar lista como PDF</button>
+  </form>
+  {% endif %}
+</div>
 
 <script>
+  let audioTocado = false;
+  const audio = document.getElementById('audio');
+
+  function initAudio() {
+    if (!audioTocado) {
+      audio.muted = true;
+      audio.play()
+        .then(() => {
+          console.log("Áudio iniciado");
+          audio.muted = false;
+          audioTocado = true;
+        })
+        .catch(err => {
+          console.error("Erro ao tocar áudio:", err);
+        });
+    }
+  }
+
+  window.addEventListener('click', initAudio);
+  window.addEventListener('touchstart', initAudio);
+
+  // Script para geração do PDF
   document.getElementById('form-download')?.addEventListener('submit', function(event) {
     event.preventDefault();
 
