@@ -5,7 +5,7 @@ from io import BytesIO
 app = Flask(__name__)
 
 pecados = {
-        "1. Amar a Deus sobre todas as coisas": [
+    "1. Amar a Deus sobre todas as coisas": [
         "Negligência na oração diária",
         "Dúvidas sobre a fé e críticas aos ensinamentos da Igreja",
         "Desânimo espiritual e revolta contra Deus",
@@ -111,6 +111,7 @@ pecados = {
     ]
 }
 
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     resultado = {}
@@ -127,6 +128,7 @@ def index():
 
     return render_template("index.html", pecados=pecados, resultado=resultado)
 
+
 @app.route("/download", methods=["POST"])
 def download():
     html_renderizado = request.form.get("html_conteudo", "")
@@ -141,7 +143,6 @@ def download():
                     mimetype="application/pdf",
                     headers={"Content-Disposition": "attachment;filename=meus_pecados.pdf"})
 
+
 if __name__ == "__main__":
-    import os
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=5000)

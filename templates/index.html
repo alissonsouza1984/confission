@@ -1,73 +1,37 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>🧾 Exame de Consciência</title>
+    <title>Exame de Consciência</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Estilos Bootstrap CDN (Render suporta sem problemas) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            padding: 2rem;
-        }
-        textarea {
-            resize: vertical;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="container">
-    <h1 class="mb-4 text-center">🧾 Exame de Consciência</h1>
-
-    <form method="POST">
-        {% for mandamento, lista in pecados.items() %}
-            <div class="mb-4">
-                <h5 class="text-primary">{{ mandamento }}</h5>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='img/cristo_pantocrator.jpg') }}" alt="Cristo Pantocrator" class="imagem-topo">
+        <h1>🧾 Exame de Consciência</h1>
+        <form method="POST">
+            {% for mandamento, lista in pecados.items() %}
+            <div class="grupo">
+                <h2>{{ mandamento }}</h2>
                 {% for pecado in lista %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="{{ mandamento }}" value="{{ loop.index0 }}" id="{{ mandamento }}-{{ loop.index0 }}">
-                        <label class="form-check-label" for="{{ mandamento }}-{{ loop.index0 }}">{{ pecado }}</label>
-                    </div>
+                    <label><input type="checkbox" name="{{ mandamento }}" value="{{ loop.index0 }}"> {{ pecado }}</label><br>
                 {% endfor %}
             </div>
-        {% endfor %}
-
-        <div class="mb-4">
-            <label for="custom" class="form-label fw-bold">Outros pecados (personalizados):</label>
-            <textarea class="form-control" id="custom" name="custom" rows="3" placeholder="Digite aqui..."></textarea>
-        </div>
-
-        <div class="d-flex flex-column flex-md-row gap-3">
-            <button type="submit" class="btn btn-success">Gerar PDF</button>
-            <a href="/" class="btn btn-secondary">Limpar seleção</a>
-        </div>
-    </form>
-
-    {% if resultado %}
-        <hr class="my-5">
-        <h3 class="text-success">📋 Pecados selecionados</h3>
-        <form action="{{ url_for('download') }}" method="POST">
-            <div id="conteudo" class="mb-3">
-                {% for mandamento, pecados_selecionados in resultado.items() %}
-                    <h5 class="mt-4">{{ mandamento }}</h5>
-                    <ul>
-                        {% for p in pecados_selecionados %}
-                            <li>{{ p }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endfor %}
+            {% endfor %}
+            <div class="grupo">
+                <label>Outros pecados que deseja confessar:</label>
+                <textarea name="custom" placeholder="Escreva aqui..."></textarea>
             </div>
-
-            <!-- Envia conteúdo HTML para o PDF -->
-            <input type="hidden" name="html_conteudo" id="html_conteudo">
-            <button type="submit" class="btn btn-primary mt-3">📥 Baixar PDF</button>
+            <button type="submit">Gerar Relatório</button>
         </form>
 
-        <script>
-            // Preenche o campo oculto com o HTML visível
-            document.querySelector("form[action='{{ url_for('download') }}']").addEventListener("submit", function () {
-                document.getElementById("html_conteudo").value = document.getElementById("conteudo").innerHTML;
-            });
-        </script>
-    {% endif %}
+        {% if resultado %}
+        <form method="POST" action="/download">
+            <input type="hidden" name="html_conteudo" value="{{ html_conteudo|safe }}">
+            <button type="submit">📄 Baixar PDF</button>
+        </form>
+        {% endif %}
+    </div>
 </body>
 </html>

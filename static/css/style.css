@@ -1,114 +1,89 @@
-/* Reset básico */
-* {
-    box-sizing: border-box;
+body {
+    font-family: 'Georgia', serif;
+    background-color: #fffdf5;
     margin: 0;
     padding: 0;
 }
-
-body {
-    font-family: Arial, sans-serif;
-    background: #f9f9f9;
-    padding: 20px;
-    color: #222;
+.grupo {
+    border: 2.5px solid #d4af37; /* dourado */
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    background-color: #fffbe9;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
 }
 
 .container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
-    background: #fff;
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    background: #fefaf0;
+    border: 3px solid #d4af37;
+    padding: 2rem;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+    border-radius: 12px;
 }
 
-h1 {
-    margin-bottom: 20px;
-    font-size: 1.8rem;
+h1, h2 {
+    color: #4b392b;
     text-align: center;
-    color: #333;
 }
 
-fieldset {
-    border: 1px solid #ccc;
-    padding: 15px 20px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-}
-
-legend {
-    font-weight: bold;
-    padding: 0 10px;
-    font-size: 1.1rem;
-    color: #444;
-}
-
-.pecado-item {
+label {
     display: block;
-    margin-bottom: 10px;
-    font-size: 1rem;
-    cursor: pointer;
+    margin: 4px 0;
 }
 
 textarea {
     width: 100%;
-    max-width: 100%;
-    min-height: 80px;
-    padding: 10px;
+    height: 100px;
+    border: 2px solid #d4af37;
+    border-radius: 5px;
+    background-color: #fffbe9;
+    padding: 8px;
     font-size: 1rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    resize: vertical;
-    font-family: Arial, sans-serif;
+    font-family: serif;
+    box-sizing: border-box;
 }
 
-.btn {
-    display: block;
-    width: 100%;
-    max-width: 200px;
-    margin: 0 auto;
-    padding: 12px;
-    background-color: #4a90e2;
+button {
+    background-color: #d4af37;
     color: white;
-    font-size: 1.1rem;
-    font-weight: 600;
+    padding: 10px 20px;
     border: none;
-    border-radius: 8px;
+    font-weight: bold;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.25s ease;
+    margin-top: 1rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
 
-.btn:hover {
-    background-color: #357ABD;
+button:hover {
+    background-color: #c29c2e;
 }
 
-hr {
-    margin: 30px 0;
-    border: none;
-    border-top: 1px solid #ddd;
+.imagem-topo {
+    display: block;
+    max-width: 100%;
+    margin: 0 auto 2rem;
+    border: 3px solid #d4af37;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
 }
 
-h2 {
-    margin-bottom: 15px;
-    color: #222;
-    font-size: 1.5rem;
-    text-align: center;
-}
-
-/* Responsividade */
 @media (max-width: 600px) {
     .container {
-        padding: 15px 15px;
+        padding: 1rem;
     }
 
-    h1 {
-        font-size: 1.5rem;
+    textarea {
+        height: 80px;
     }
 
-    legend {
-        font-size: 1rem;
-    }
-
-    .btn {
-        max-width: 100%;
+    h1, h2 {
+        font-size: 1.2rem;
     }
 }
+

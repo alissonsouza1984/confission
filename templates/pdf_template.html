@@ -1,54 +1,43 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8" />
-<style>
-  body {
-    font-family: "Georgia", serif;
-    padding: 40px;
-    color: #333;
-    background-color: #fffef8;
-  }
-  h1 {
-    text-align: center;
-    color: #6a4f28;
-    margin-bottom: 30px;
-  }
-  h2 {
-    color: #4a3820;
-    margin-top: 30px;
-  }
-  ul {
-    list-style-type: square;
-    padding-left: 20px;
-  }
-  .icon {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  .icon img {
-    width: 120px;
-    border-radius: 10px;
-    border: 3px solid #d4af37;
-  }
-</style>
+    <meta charset="UTF-8">
+    <title>Pecados Selecionados</title>
+    <style>
+        body {
+            font-family: "Georgia", serif;
+            color: #000;
+            background-color: #fff;
+            padding: 2rem;
+        }
+        h1 {
+            text-align: center;
+            color: #3b2f2f;
+        }
+        h3 {
+            margin-top: 2rem;
+        }
+        ul {
+            margin-bottom: 1rem;
+        }
+        img {
+            display: block;
+            margin: 0 auto;
+            width: 180px;
+        }
+    </style>
 </head>
 <body>
-  <div class="icon">
-    <img src="{{ url_for('static', filename='img/cristo_pantocrator.jpg') }}" alt="Cristo Pantocrator" />
-  </div>
+    <h1>Exame de Consciência</h1>
+    <img src="{{ url_for('static', filename='img/cristo_pantocrator.jpg') }}" alt="Cristo Pantocrator">
 
-  <h1>Exame de Consciência</h1>
-
-  {% for mandamento, lista in resultado.items() %}
-  <div class="section">
-    <h2>{{ mandamento }}</h2>
-    <ul>
-      {% for item in lista %}
-      <li>{{ item }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endfor %}
+    {% for mandamento, pecados in resultado.items() %}
+        <h3>{{ mandamento }}</h3>
+        <ul>
+            {% for pecado in pecados %}
+                <li>{{ pecado }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
 </body>
 </html>
