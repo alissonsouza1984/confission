@@ -115,6 +115,7 @@ pecados = {
 @app.route("/", methods=["GET", "POST"])
 def index():
     resultado = {}
+    html_conteudo = ""
     if request.method == "POST":
         for mandamento, lista in pecados.items():
             indices = request.form.getlist(mandamento)
@@ -126,7 +127,10 @@ def index():
         if custom:
             resultado.setdefault("Outros pecados digitados", []).append(custom)
 
-    return render_template("index.html", pecados=pecados, resultado=resultado)
+        # Renderiza o conteúdo do PDF no html_conteudo para enviar no formulário de download
+        html_conteudo = render_template("pdf_template.html", resultado=resultado)
+
+    return render_template("index.html", pecados=pecados, resultado=resultado, html_conteudo=html_conteudo)
 
 
 @app.route("/download", methods=["POST"])
@@ -143,6 +147,5 @@ def download():
                     mimetype="application/pdf",
                     headers={"Content-Disposition": "attachment;filename=meus_pecados.pdf"})
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)

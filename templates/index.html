@@ -1,37 +1,143 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Exame de Consciência</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <img src="{{ url_for('static', filename='img/cristo_pantocrator.jpg') }}" alt="Cristo Pantocrator" class="imagem-topo">
-        <h1>🧾 Exame de Consciência</h1>
-        <form method="POST">
-            {% for mandamento, lista in pecados.items() %}
-            <div class="grupo">
-                <h2>{{ mandamento }}</h2>
-                {% for pecado in lista %}
-                    <label><input type="checkbox" name="{{ mandamento }}" value="{{ loop.index0 }}"> {{ pecado }}</label><br>
-                {% endfor %}
-            </div>
-            {% endfor %}
-            <div class="grupo">
-                <label>Outros pecados que deseja confessar:</label>
-                <textarea name="custom" placeholder="Escreva aqui..."></textarea>
-            </div>
-            <button type="submit">Gerar Relatório</button>
-        </form>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exame de Consciência</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
 
-        {% if resultado %}
-        <form method="POST" action="/download">
-            <input type="hidden" name="html_conteudo" value="{{ html_conteudo|safe }}">
-            <button type="submit">📄 Baixar PDF</button>
-        </form>
-        {% endif %}
+      textarea.form-control {
+        width: 100% !important;
+        font-size: 1rem;
+      }
+
+      .btn {
+        width: 100%;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body class="page-body">
+  <div class="container my-5">
+    <div class="icon">
+      <img src="{{ url_for('static', filename='img/cristo_pantocrator.jpg') }}" alt="Cristo Pantocrator" />
     </div>
+    <h1 class="title">📜 Exame de Consciência</h1>
+
+    <form method="POST" id="form-pecados">
+      {% for mandamento, lista in pecados.items() %}
+      <div class="card mb-3 card-section">
+        <div class="card-header fw-bold section-title">{{ mandamento }}</div>
+        <div class="card-body">
+          {% for pecado in lista %}
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="{{ mandamento }}" value="{{ loop.index0 }}" id="{{ mandamento }}-{{ loop.index0 }}" />
+            <label class="form-check-label" for="{{ mandamento }}-{{ loop.index0 }}">{{ pecado }}</label>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+
+      <div class="mb-3">
+        <label for="custom" class="form-label fw-bold">Outro(s) pecado(s) que deseja digitar:</label>
+        <textarea class="form-control" id="custom" name="custom" rows="3" placeholder="Digite livremente..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Gerar minha lista</button>
+
+    </form>
+
+    {% if resultado %}
+    <hr class="my-5" />
+    <h2 class="section-title">📄 Seus pecados selecionados:</h2>
+    <form method="POST" action="/download" id="form-download">
+      <input type="hidden" name="html_conteudo" id="html_conteudo" />
+
+      <ul class="list-group my-3 list-peccados">
+        {% for mandamento, lista in resultado.items() %}
+        <li class="list-group-item list-header">{{ mandamento }}</li>
+        {% for item in lista %}
+        <li class="list-group-item list-item">{{ item }}</li>
+        {% endfor %}
+        {% endfor %}
+      </ul>
+
+      <button type="submit" class="btn btn-success">📅 Baixar lista como PDF</button>
+
+    </form>
+    {% endif %}
+  </div>
+
+<script>
+  document.getElementById('form-download')?.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    let listaHTML = `<div class="icon">
+      <img src="{{ url_for('static', filename='img/cristo_pantocrator.jpg') }}" alt="Cristo Pantocrator" />
+    </div>
+    <h1>Exame de Consciência</h1>`;
+
+    {% for mandamento, lista in resultado.items() %}
+      listaHTML += `<h2>{{ mandamento }}</h2><ul>`;
+      {% for item in lista %}
+        listaHTML += `<li>{{ item }}</li>`;
+      {% endfor %}
+      listaHTML += "</ul>";
+    {% endfor %}
+
+    const css = `
+      body {
+        font-family: Georgia, serif;
+        padding: 40px;
+        color: #333;
+        background-color: #fffef8;
+      }
+      h1 {
+        text-align: center;
+        color: #6a4f28;
+        margin-bottom: 30px;
+      }
+      h2 {
+        color: #4a3820;
+        margin-top: 30px;
+      }
+      ul {
+        list-style-type: square;
+        padding-left: 20px;
+      }
+      .icon {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .icon img {
+        width: 120px;
+        border-radius: 10px;
+        border: 3px solid #d4af37;
+      }
+    `;
+
+    document.getElementById('html_conteudo').value = `
+      <!DOCTYPE html>
+      <html lang="pt-br">
+      <head>
+        <meta charset="UTF-8" />
+        <style>${css}</style>
+      </head>
+      <body>
+        ${listaHTML}
+      </body>
+      </html>
+    `;
+
+    this.submit();
+  });
+</script>
 </body>
 </html>
