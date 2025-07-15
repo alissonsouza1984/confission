@@ -127,11 +127,9 @@ def index():
         if custom:
             resultado.setdefault("Outros pecados digitados", []).append(custom)
 
-        # Renderiza o conteúdo do PDF no html_conteudo para enviar no formulário de download
         html_conteudo = render_template("pdf_template.html", resultado=resultado)
 
     return render_template("index.html", pecados=pecados, resultado=resultado, html_conteudo=html_conteudo)
-
 
 @app.route("/download", methods=["POST"])
 def download():
@@ -140,7 +138,8 @@ def download():
         return "Conteúdo vazio para gerar PDF", 400
 
     pdf_io = BytesIO()
-    HTML(string=html_renderizado, base_url=request.base_url).write_pdf(target=pdf_io)
+    html = HTML(string=html_renderizado, base_url=request.base_url)
+    html.write_pdf(target=pdf_io)  # Correto para novas versões
     pdf_io.seek(0)
 
     return Response(pdf_io.read(),
