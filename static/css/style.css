@@ -96,6 +96,21 @@ blockquote {
   font-style: italic;
   color: #4a3820;
 }
+
+/* Adicione estas regras ao seu style.css */
+.card-section {
+  border-left: 5px solid #d4af37; /* Linha dourada à esquerda */
+  background-color: #fffef8;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.card-section h3 {
+  color: #4a3820;
+  font-weight: bold;
+}
+
 .list-group-item {
   border: none;
   color: #333;

@@ -132,7 +132,30 @@ pecados = {
         "Busquei o sucesso pessoal acima da vontade divina",
         "Agi por egoísmo, pensando apenas em mim",
         "Fui omisso diante de injustiças ou sofrimentos ao meu redor"
+    ],
+        "Pecados veniais (faltas leves que enfraquecem minha alma, mas não rompem a amizade com Deus)": [
+        "Falei palavras impacientes, com leve irritação ou impolidez",
+        "Fui negligente em atos de caridade com os mais próximos",
+        "Fiz piadas ou comentários inapropriados, sem intenção grave",
+        "Julguei os outros interiormente, mesmo sem espalhar críticas",
+        "Tive distrações voluntárias durante a oração, sem esforço para me recolher",
+        "Faltei com pequenas responsabilidades no trabalho ou estudo por descuido",
+        "Deixei de ajudar alguém por comodismo, ainda que pudesse fazê-lo",
+        "Busquei meu conforto ou prazer em coisas pequenas, sem moderação",
+        "Fui impaciente com pessoas mais lentas ou com ideias diferentes das minhas",
+        "Usei meu tempo de forma egoísta, deixando de servir mais ao próximo"
+    ],
+    
+    "Pecados capitais (raízes do pecado que geram muitas outras faltas)": [
+        "Cedi à soberba, agindo com orgulho ou querendo ser superior aos outros",
+        "Fui avarento, apegado ao dinheiro ou a bens materiais, sem generosidade",
+        "Entreguei-me à luxúria, buscando prazeres impuros nos pensamentos, olhares ou ações",
+        "Fui invejoso, entristecendo-me com o bem ou sucesso alheio",
+        "Alimentei a gula, comendo ou bebendo além do necessário por puro prazer",
+        "Fui irado, permitindo que a raiva dominasse minhas palavras ou atitudes",
+        "Fui preguiçoso, negligente no cumprimento dos meus deveres espirituais ou materiais"
     ]
+
 }
 
 
@@ -169,92 +192,7 @@ def download():
     return Response(pdf_io.read(),
                     mimetype="application/pdf",
                     headers={"Content-Disposition": "attachment;filename=meus_pecados.pdf"})
-@app.route("/oracoes")
-def oracoes():
-    oracoes_lista = [
-        {
-            "id": 1,
-            "titulo": "Oração do Arrependimento",
-            "texto": (
-                "Meu Jesus, por serdes Deus infinitamente bom e digno de todo o amor, "
-                "e porque me amais e quereis a minha salvação, arrependo-me de todo o coração "
-                "de Vos ter ofendido. Pesa-me sinceramente de todos os meus pecados, "
-                "porque com eles mereci o inferno, perdi o céu e feri o vosso Coração tão amável. "
-                "Proponho firmemente, com o auxílio da vossa graça, não mais pecar, confessar-me "
-                "e cumprir a penitência. Perdoai-me, Senhor, e acolhei-me em vossa misericórdia. Amém."
-            ),
-            "descricao": "Para momentos de reflexão e conversão interior."
-        },
-        {
-            "id": 2,
-            "titulo": "Confissão Geral",
-            "texto": (
-                "Senhor meu Deus, reconheço diante de Vós que pequei muitas vezes "
-                "por pensamentos, palavras, atos e omissões. Arrependo-me sinceramente "
-                "de todas as minhas faltas e ofensas, especialmente daquelas que mais "
-                "feriram o vosso amor. Com humildade, suplico a vossa misericórdia e, "
-                "como o filho pródigo, digo: Pai, pequei contra o Céu e contra Vós. "
-                "Não sou digno de ser chamado vosso filho. Tende piedade de mim, Senhor. Amém."
-            ),
-            "descricao": "Ideal para preparação antes da confissão sacramental."
-        },
-        {
-            "id": 3,
-            "titulo": "Salmo 51 (50) – Miserere",
-            "texto": (
-                "Tende piedade de mim, ó Deus, segundo a vossa misericórdia; "
-                "segundo a grandeza da vossa compaixão, apagai a minha culpa. "
-                "Lavai-me totalmente da minha iniquidade, e purificai-me do meu pecado. "
-                "Criai em mim, ó Deus, um coração puro e renovai em meu peito um espírito firme."
-            ),
-            "descricao": "Um dos salmos penitenciais mais conhecidos da tradição cristã."
-        },
-        {
-            "id": 4,
-            "titulo": "Salmo 130 (129) – Do Profundo",
-            "texto": (
-                "Das profundezas clamo a Vós, Senhor. Senhor, escutai a minha voz! "
-                "Estejam atentos os vossos ouvidos às súplicas da minha prece. "
-                "Se levardes em conta nossas faltas, Senhor, quem poderá subsistir? "
-                "Mas em Vós se encontra o perdão, e por isso Vos teme com reverência."
-            ),
-            "descricao": "Uma poderosa expressão de esperança na misericórdia divina."
-        },
-        {
-            "id": 5,
-            "titulo": "Salmo 6 – Senhor, não me repreendais",
-            "texto": (
-                "Senhor, não me repreendais em vossa ira, nem me castigueis no vosso furor. "
-                "Tende piedade de mim, Senhor, pois desfaleço; curai-me, Senhor, pois meus ossos tremem. "
-                "A minha alma está profundamente perturbada... Salvai-me por causa da vossa misericórdia!"
-            ),
-            "descricao": "Suplica o perdão e a cura espiritual e física."
-        },
-        {
-            "id": 6,
-            "titulo": "Ato de Contrição",
-            "texto": (
-                "Meu Deus, arrependo-me de todo o coração de Vos ter ofendido, "
-                "porque sois infinitamente bom e digno de ser amado sobre todas as coisas. "
-                "Proponho firmemente, com o auxílio da vossa graça, emendar-me e evitar as ocasiões de pecado. "
-                "Senhor, pela paixão de Jesus Cristo, tende piedade de mim. Amém."
-            ),
-            "descricao": "Expressa arrependimento sincero e desejo de mudança."
-        },
-        {
-            "id": 7,
-            "titulo": "Oração à Virgem Maria",
-            "texto": (
-                "Ó Maria Santíssima, Mãe de Deus e minha Mãe, refugio-me sob a vossa proteção maternal. "
-                "Vós que sois a Medianeira de todas as graças, intercedei por mim junto a vosso Filho Jesus. "
-                "Alcançai-me a graça do verdadeiro arrependimento, uma boa confissão e a perseverança no bem. "
-                "Acompanhai-me em todos os momentos da vida, sobretudo na hora da morte. Amém."
-            ),
-            "descricao": "Peça a intercessão de Nossa Senhora após o exame de consciência."
-        }
-    ]
-    return render_template("oracoes.html", oracoes=oracoes_lista) 
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-
