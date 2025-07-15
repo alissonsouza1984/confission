@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, Response, url_for
 from weasyprint import HTML
-from weasyprint.fonts import FontConfiguration
+from weasyprint import HTML, FontConfiguration
 from io import BytesIO
 
 app = Flask(__name__)
