@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, Response, url_for
 from weasyprint import HTML
-from weasyprint import HTML, FontConfiguration
 from io import BytesIO
 
 app = Flask(__name__)
@@ -134,9 +133,8 @@ def download():
     if not html_renderizado:
         return "Conteúdo vazio para gerar PDF", 400
 
-    font_config = FontConfiguration()
     pdf_io = BytesIO()
-    HTML(string=html_renderizado, base_url=request.root_url).write_pdf(pdf_io, font_config=font_config)
+    HTML(string=html_renderizado, base_url=request.root_url).write_pdf(pdf_io)
     pdf_io.seek(0)
 
     return Response(pdf_io.read(),
