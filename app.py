@@ -140,7 +140,7 @@ def download():
         return "Conteúdo vazio para gerar PDF", 400
 
     pdf_io = BytesIO()
-    HTML(string=html_renderizado, base_url=request.root_url).write_pdf(pdf_io)
+    HTML(string=html_renderizado, base_url=request.base_url).write_pdf(target=pdf_io)
     pdf_io.seek(0)
 
     return Response(pdf_io.read(),
