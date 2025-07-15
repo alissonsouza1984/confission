@@ -1,5 +1,6 @@
 # Usa imagem base leve com Python
-FROM python:3.11-slim
+FROM python:3.11-slim  # <-- versão suportada
+
 
 # Instala libs do sistema que o WeasyPrint precisa
 RUN apt-get update && apt-get install -y \
