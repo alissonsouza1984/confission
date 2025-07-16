@@ -120,3 +120,37 @@ blockquote {
 .list-group-flush .list-group-item {
   border-width: 0;
 }
+/* Estilização do menu flutuante */
+.dropdown-menu {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 9998;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  width: 250px;
+}
+
+.dropdown-item {
+  text-decoration: none;
+  color: #4a3820; /* Cor do texto */
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #fffef8;
+  border: 1px solid #d4af37;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #b38c1a;
+  color: white;
+}
