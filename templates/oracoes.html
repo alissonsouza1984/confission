@@ -47,7 +47,7 @@
   <h1 class="title">📖 Orações Católicas</h1>
 
   {% for oracao in oracoes %}
-  <div class="card-oracao" id="{{ oracao.titulo.replace(' ', '-') }}">
+  <div class="card-oracao" id="{{ oracao.titulo | replace(' ', '-') | replace('à', 'a') | replace('á','a') | replace('é','e') | replace('í','i') | replace('ó','o') | replace('ú','u') | replace('ç','c') }}">
     <h3>{{ oracao.titulo }}</h3>
     {% if oracao.descricao %}
     <p class="descricao">{{ oracao.descricao }}</p>
