@@ -235,16 +235,16 @@
   const audio = document.getElementById('audio');
 
   function initAudio() {
-    if (!audioTocado && audio.src) {
-      audio.muted = true;
+    if (!audioTocado && audio) {
+      audio.muted = true; // Começa mudo para evitar bloqueio
       audio.play()
         .then(() => {
           console.log("Áudio iniciado com sucesso");
-          audio.muted = false;
+          audio.muted = false; // Remove o mudo após iniciar
           audioTocado = true;
         })
         .catch(err => {
-          console.error("Erro ao iniciar o áudio:", err);
+          console.error("Erro ao tocar o áudio:", err);
         });
     }
   }
@@ -252,7 +252,6 @@
   window.addEventListener('click', initAudio);
   window.addEventListener('touchstart', initAudio);
 </script>
-
 <!-- Script para mostrar/ocultar menu flutuante -->
 <script>
   const btn = document.getElementById('floatingBtn');
@@ -268,6 +267,36 @@
     }
   });
 </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let audioTocado = false;
+    const audio = document.getElementById('audio');
 
+    function initAudio() {
+      if (!audioTocado && audio && audio.src) {
+        audio.muted = true;
+        audio.play()
+          .then(() => {
+            console.log("Áudio iniciado com sucesso");
+            audio.muted = false;
+            audioTocado = true;
+          })
+          .catch(err => {
+            console.error("Erro ao iniciar o áudio:", err);
+          });
+      }
+    }
+
+    // Clique em qualquer lugar da página
+    window.addEventListener('click', initAudio);
+    window.addEventListener('touchstart', initAudio);
+
+    // Clique no menu flutuante também conta como interação
+    const floatingBtn = document.getElementById('floatingBtn');
+    if (floatingBtn) {
+      floatingBtn.addEventListener('click', initAudio);
+    }
+  });
+</script>
 </body>
 </html>
