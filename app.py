@@ -158,7 +158,6 @@ pecados = {
 
 }
 
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     resultado = {}
@@ -192,7 +191,45 @@ def download():
     return Response(pdf_io.read(),
                     mimetype="application/pdf",
                     headers={"Content-Disposition": "attachment;filename=meus_pecados.pdf"})
-
+@app.route("/oracoes")
+def oracoes():
+    oracoes_lista = [
+        {
+            "id": 1,
+            "titulo": "Confissão Geral",
+            "texto": (
+                "Senhor meu Deus, reconheço diante de Vós que pequei muitas vezes por pensamentos, palavras, atos e omissões. "
+                "Arrependo-me sinceramente de todas as minhas faltas e ofensas, especialmente daquelas que mais feriram o vosso amor. "
+                "Com humildade, suplico a vossa misericórdia e, como o filho pródigo, digo: Pai, pequei contra o Céu e contra Vós. "
+                "Não sou digno de ser chamado vosso filho. Tende piedade de mim, Senhor. Amém."
+            ),
+            "descricao": "Ideal para preparação antes da confissão sacramental."
+        },
+        {
+            "id": 2,
+            "titulo": "Miserere Mei Deus",
+            "texto": (
+                "Tende piedade de mim, ó Deus, segundo a vossa misericórdia; "
+                "segundo a grandeza da vossa compaixão, apagai a minha culpa. "
+                "Lavai-me totalmente da minha iniquidade, e purificai-me do meu pecado. "
+                "Criai em mim, ó Deus, um coração puro e renovai em meu peito um espírito firme."
+            ),
+            "descricao": "Um dos salmos penitenciais mais conhecidos da tradição cristã."
+        },
+        {
+            "id": 6,
+            "titulo": "Acto de Contrição",
+            "texto": (
+                "Meu Deus, arrependo-me de todo o coração de Vos ter ofendido, "
+                "porque sois infinitamente bom e digno de ser amado sobre todas as coisas. "
+                "Proponho firmemente, com o auxílio da vossa graça, emendar-me e evitar as ocasiões de pecado. "
+                "Senhor, pela paixão de Jesus Cristo, tende piedade de mim. Amém."
+            ),
+            "descricao": "Expressa arrependimento sincero e desejo de mudança."
+        }
+    ]
+    return render_template("oracoes.html", oracoes=oracoes_lista)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
