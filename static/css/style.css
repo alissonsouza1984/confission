@@ -108,28 +108,7 @@ blockquote {
   margin-top: 1rem;
 }
 
-/* Menu Flutuante de Orações */
-.floating-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #d4af37;
-  color: #4a3820;
-  border: none;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  font-size: 2rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  z-index: 9999;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.floating-btn:hover {
-  transform: scale(1.1);
-}
-
+/* Estilização do menu flutuante */
 .dropdown-menu {
   position: fixed;
   bottom: 80px;
@@ -150,7 +129,7 @@ blockquote {
 
 .dropdown-item {
   text-decoration: none;
-  color: #4a3820;
+  color: #4a3820; /* Cor do texto */
   font-weight: bold;
   padding: 10px;
   border-radius: 6px;
