@@ -196,6 +196,15 @@ def oracoes():
     oracoes_lista = [
         {
             "id": 1,
+            "titulo": "Oração do Arrependimento",
+            "texto": (
+                "Meu Jesus, por serdes tão bom, e por me amardes tanto, vos agradeço por me terdes esperado até agora e não terdes permitido que eu morresse em pecado. "
+                "Peço-vos, por vossa paixão e morte na cruz, perdoai-me todos os meus pecados e fazei-me verdadeiramente penitente..."
+            ),
+            "descricao": "Para momentos de reflexão e conversão interior."
+        },
+        {
+            "id": 2,
             "titulo": "Confissão Geral",
             "texto": (
                 "Senhor meu Deus, reconheço diante de Vós que pequei muitas vezes por pensamentos, palavras, atos e omissões. "
@@ -206,7 +215,7 @@ def oracoes():
             "descricao": "Ideal para preparação antes da confissão sacramental."
         },
         {
-            "id": 2,
+            "id": 3,
             "titulo": "Miserere Mei Deus",
             "texto": (
                 "Tende piedade de mim, ó Deus, segundo a vossa misericórdia; "
@@ -215,6 +224,27 @@ def oracoes():
                 "Criai em mim, ó Deus, um coração puro e renovai em meu peito um espírito firme."
             ),
             "descricao": "Um dos salmos penitenciais mais conhecidos da tradição cristã."
+        },
+        {
+            "id": 4,
+            "titulo": "Do Profundo",
+            "texto": (
+                "Das profundezas clamo a Vós, Senhor. Senhor, escutai a minha voz! "
+                "Estejam atentos os vossos ouvidos às súplicas da minha prece. "
+                "Se levardes em conta nossas faltas, Senhor, quem poderá subsistir? "
+                "Mas em Vós se encontra o perdão, e por isso Vos teme com reverência."
+            ),
+            "descricao": "Uma poderosa expressão de esperança na misericórdia divina."
+        },
+        {
+            "id": 5,
+            "titulo": "Salmo 6",
+            "texto": (
+                "Senhor, não me repreendais em vossa ira, nem me castigueis no vosso furor. "
+                "Tende piedade de mim, Senhor, pois desfaleço; curai-me, Senhor, pois meus ossos tremem. "
+                "A minha alma está profundamente perturbada... Salvai-me por causa da vossa misericórdia!"
+            ),
+            "descricao": "Suplica o perdão e a cura espiritual e física."
         },
         {
             "id": 6,
@@ -226,6 +256,17 @@ def oracoes():
                 "Senhor, pela paixão de Jesus Cristo, tende piedade de mim. Amém."
             ),
             "descricao": "Expressa arrependimento sincero e desejo de mudança."
+        },
+        {
+            "id": 7,
+            "titulo": "Oração à Virgem Maria",
+            "texto": (
+                "Ó Maria Santíssima, Mãe de Deus e minha Mãe, refugio-me sob a vossa proteção maternal. "
+                "Vós que sois a Medianeira de todas as graças, intercedei por mim junto a vosso Filho Jesus. "
+                "Alcançai-me a graça do verdadeiro arrependimento, uma boa confissão e a perseverança no bem. "
+                "Acompanhai-me em todos os momentos da vida, sobretudo na hora da morte. Amém."
+            ),
+            "descricao": "Peça a intercessão de Nossa Senhora após o exame de consciência."
         }
     ]
     return render_template("oracoes.html", oracoes=oracoes_lista)
