@@ -46,17 +46,18 @@
 
   <h1 class="title">📖 Orações Católicas</h1>
 
-{% for oracao in oracoes %}
-<div class="card-oracao" id="{{ oracao.titulo.replace(' ', '-') }}">
-  <h3>{{ oracao.titulo }}</h3>
-  {% if oracao.descricao %}
-  <p class="descricao">{{ oracao.descricao }}</p>
-  {% endif %}
-  <p>{{ oracao.texto }}</p>
-</div>
-{% endfor %}
+  {% for oracao in oracoes %}
+  <div class="card-oracao" id="{{ oracao.titulo.replace(' ', '-') }}">
+    <h3>{{ oracao.titulo }}</h3>
+    {% if oracao.descricao %}
+    <p class="descricao">{{ oracao.descricao }}</p>
+    {% endif %}
+    <p>{{ oracao.texto }}</p>
+  </div>
+  {% endfor %}
 
   <a href="/" class="back-link">← Voltar ao Exame de Consciência</a>
 </div>
+
 </body>
 </html>
