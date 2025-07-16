@@ -1,3 +1,5 @@
+import requests
+from datetime import datetime
 from flask import Flask, render_template, request, Response, url_for
 from weasyprint import HTML
 from io import BytesIO
@@ -158,6 +160,8 @@ pecados = {
 
 }
 
+
+# ✅ Rota principal
 @app.route("/", methods=["GET", "POST"])
 def index():
     resultado = {}
@@ -177,6 +181,7 @@ def index():
 
     return render_template("index.html", pecados=pecados, resultado=resultado, html_conteudo=html_conteudo)
 
+# ✅ Rota de download do PDF
 @app.route("/download", methods=["POST"])
 def download():
     html_renderizado = request.form.get("html_conteudo", "")
@@ -185,12 +190,14 @@ def download():
 
     pdf_io = BytesIO()
     html = HTML(string=html_renderizado, base_url=request.base_url)
-    html.write_pdf(target=pdf_io)  # Correto para novas versões
+    html.write_pdf(target=pdf_io)
     pdf_io.seek(0)
 
     return Response(pdf_io.read(),
                     mimetype="application/pdf",
                     headers={"Content-Disposition": "attachment;filename=meus_pecados.pdf"})
+
+# ✅ Rota de orações
 @app.route("/oracoes")
 def oracoes():
     oracoes_lista = [
@@ -271,6 +278,55 @@ def oracoes():
     ]
     return render_template("oracoes.html", oracoes=oracoes_lista)
 
+# ✅ Rota da Liturgia do Dia
+@app.route("/liturgia")
+def liturgia():
+    try:
+        response = requests.get("https://liturgia.up.railway.app/")
+        response.raise_for_status()
+        dados_api = response.json()
+
+        def extrair_texto(obj):
+            if isinstance(obj, dict):
+                return {
+                    "titulo": obj.get("titulo", ""),
+                    "texto": obj.get("texto", "Texto não disponível"),
+                    "referencia": obj.get("referencia", "Sem referência"),
+                    "refrao": obj.get("refrao", "")  # agora extrai o refrão também
+                }
+            return {
+                "titulo": "",
+                "texto": obj or "Texto não disponível",
+                "referencia": "Sem referência",
+                "refrao": ""
+            }
+
+        # Corrige a data para uso na API do Vaticano (Santo do Dia)
+        data_api = dados_api.get("data", datetime.now().strftime("%d/%m/%Y"))
+        try:
+            data_iso = datetime.strptime(data_api, "%d/%m/%Y").strftime("%Y-%m-%d")
+        except ValueError:
+            data_iso = datetime.now().strftime("%Y-%m-%d")
+
+        dados = {
+            "data": dados_api.get("data"),
+            "titulo": dados_api.get("liturgia", "Liturgia do Dia"),
+            "cor": dados_api.get("cor", "Cor litúrgica não informada"),
+            "dia": dados_api.get("dia", ""),
+            "oferendas": dados_api.get("oferendas", ""),
+            "comunhao": dados_api.get("comunhao", ""),
+            "segundaLeitura": dados_api.get("segundaLeitura", ""),
+            "antifonas": dados_api.get("antifonas", {}),
+            "primeiraLeitura": extrair_texto(dados_api.get("primeiraLeitura")),
+            "salmo": extrair_texto(dados_api.get("salmo")),
+            "evangelho": extrair_texto(dados_api.get("evangelho")),
+        }
+
+        return render_template("liturgia.html", dados=dados)
+
+    except Exception as e:
+        return f"Erro ao carregar a liturgia: {e}", 500
+
+# ✅ Execução da aplicação
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-
