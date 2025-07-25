@@ -1,10 +1,193 @@
 import requests
-from datetime import datetime
-from flask import Flask, render_template, request, Response, url_for
-from weasyprint import HTML
+from flask import Flask, render_template, Response, send_file, request
+from functools import lru_cache
+import os
+import re
+import subprocess
 from io import BytesIO
+from weasyprint import HTML
+from datetime import datetime
+
+# Executa o extrator em segundo plano
+process = subprocess.Popen(
+    ["python3", "static/text/extrator_links.py"],
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL
+)
+print("Extrator iniciado em segundo plano.")
 
 app = Flask(__name__)
+
+# Caminho para o arquivo de links
+LINKS_FILE = os.path.join(app.static_folder, 'text', 'salmos_links.txt')
+
+# === 1. Defina formatar_nome_salmo ANTES de carregar_salmos ===
+def formatar_nome_salmo(filename):
+    # Remove extensão
+    nome = re.sub(r'\.(mp3|doc)$', '', filename, flags=re.IGNORECASE)
+    # Remove '_playback'
+    nome = re.sub(r'_playback$', '', nome, flags=re.IGNORECASE)
+    # Normaliza múltiplos underscores
+    nome = re.sub(r'_+', '_', nome).strip('_')
+
+    # Casos especiais
+    if 'dn_' in nome:
+        return "Daniel 3"
+    if 'isaias12' in nome or 'isaías12' in nome:
+        return "Responsório de Isaías 12"
+    if 'responsorio' in nome:
+        return "Responsório"
+    if 'vigilia' in nome or 'vigiliapascal' in nome:
+        return "Vigília Pascal"
+
+    # Padrão: salmo_X ou salmo_X_Y
+    match = re.match(r'^salmo_(\d+)(?:_(\w+))?$', nome, re.IGNORECASE)
+    if match:
+        numero = match.group(1)
+        sufixo = match.group(2) or ''
+        if sufixo.isdigit():
+            return f"Salmo {numero} — Versão {sufixo}"
+        elif sufixo and re.match(r'^[a-d]$', sufixo, re.IGNORECASE):
+            versao = ord(sufixo.lower()) - ord('a') + 1
+            return f"Salmo {numero} — Versão {versao}"
+        else:
+            return f"Salmo {numero}"
+    return nome.replace('_', ' ').title()
+
+# === 2. Defina chave_ordenacao (opcional, pode ser inline) ===
+def chave_ordenacao(salmo):
+    nome = salmo['nome']
+    
+    # Ordem: Daniel 3 → Isaías 12 → Vigília Pascal → Salmos por número
+    if 'Daniel 3' in nome:
+        return (1, 0, 0)
+    if 'Isaias12' in nome or 'Isaías 12' in nome or 'Responsório de Isaías 12' in nome:
+        return (2, 0, 0)
+    if 'Vigília Pascal' in nome:
+        return (3, 0, 0)
+    
+    # Extrai número do salmo e versão
+    match = re.match(r'Salmo (\d+)(?:[ _\-]?(.+))?', nome)
+    if match:
+        numero = int(match.group(1))
+        sufixo = match.group(2) or '0'
+        versao_match = re.search(r'(\d+)', sufixo)
+        versao = int(versao_match.group(1)) if versao_match else 0
+        return (10, numero, versao)
+    
+    return (99, nome.lower())
+
+# === 3. Agora defina carregar_salmos ===
+def carregar_salmos():
+    if not os.path.exists(LINKS_FILE):
+        return []
+
+    with open(LINKS_FILE, 'r', encoding='utf-8') as f:
+        linhas = [linha.strip() for linha in f if linha.strip()]
+
+    mp3_urls = []
+    doc_urls = []
+    secao = None
+
+    for linha in linhas:
+        if linha.startswith('## Links MP3:'):
+            secao = 'mp3'
+            continue
+        elif linha.startswith('## Links DOC (Cifras):'):
+            secao = 'doc'
+            continue
+        if secao == 'mp3' and linha.endswith('.mp3'):
+            mp3_urls.append(linha)
+        elif secao == 'doc' and linha.endswith('.doc'):
+            doc_urls.append(linha)
+
+    mp3_dict = {url.split('/')[-1]: url for url in mp3_urls}
+    doc_dict = {url.split('/')[-1].replace('.doc', '.mp3'): url for url in doc_urls}
+
+    salmos = []
+    for filename, mp3_url in mp3_dict.items():
+        doc_url = doc_dict.get(filename, "#")
+        nome = filename.rsplit('.', 1)[0]  # mantém nome original
+        salmos.append({
+            'filename': filename,
+            'nome': nome,
+            'mp3_url': mp3_url,
+            'doc_url': doc_url
+        })
+
+    # Ordena por nome (opcional)
+    return sorted(salmos, key=lambda x: x['nome'])
+
+# === 4. Carregue os salmos (depois de tudo definido) ===
+SALMOS = carregar_salmos()
+
+# === 5. Rotas do Flask ===
+@app.route('/salmos')
+def pagina_salmos():
+    return render_template('salmos.html', salmos=SALMOS, ano=2025)
+
+# 🔊 Rota: Stream do áudio (sem expor URL)
+@app.route('/play/<path:filename>')
+def play_salmo(filename):
+    from urllib.parse import unquote
+    filename = unquote(filename)
+    salmo = next((s for s in SALMOS if s['filename'] == filename), None)
+    if not salmo:
+        return "Salmos não encontrado", 404
+    def generate():
+        with requests.get(salmo['mp3_url'], stream=True) as r:
+            r.raise_for_status()
+            for chunk in r.iter_content(1024):
+                yield chunk
+    return Response(generate(), mimetype="audio/mpeg")
+
+# ⬇️ Rota: Download anônimo (via wget em memória)
+@app.route('/download/mp3/<path:filename>')
+def download_mp3(filename):
+    from urllib.parse import unquote
+    filename = unquote(filename)
+    salmo = next((s for s in SALMOS if s['filename'] == filename), None)
+    if not salmo:
+        return "Salmos não encontrado", 404
+    
+
+    def generate():
+        process = subprocess.Popen(
+            ['wget', '-q', '-O-', salmo['mp3_url']],
+            stdout=subprocess.PIPE
+        )
+        for chunk in iter(lambda: process.stdout.read(1024), b""):
+            yield chunk
+        process.wait()
+
+    return Response(
+        generate(),
+        mimetype='audio/mpeg',
+        headers={'Content-Disposition': f'attachment; filename="{filename}"'}
+    )
+
+
+@app.route('/download/doc/<path:filename>')
+def download_doc(filename):
+    from urllib.parse import unquote
+    filename = unquote(filename)
+    doc_filename = filename.replace('.mp3', '.doc')
+    salmo = next((s for s in SALMOS if s['filename'].replace('.mp3', '.doc') == doc_filename), None)
+    if not salmo or salmo['doc_url'] == "#":
+        return "Cifra não disponível", 404
+
+    def generate():
+        with requests.get(salmo['doc_url'], stream=True) as r:
+            r.raise_for_status()
+            for chunk in r.iter_content(chunk_size=1024):
+                yield chunk
+
+    return Response(
+        generate(),
+        mimetype='application/vnd.ms-word',
+        headers={'Content-Disposition': f'attachment; filename="{doc_filename}"'}
+    )
+
 
 pecados = {
     "1. Amar a Deus sobre todas as coisas": [
@@ -278,54 +461,140 @@ def oracoes():
     ]
     return render_template("oracoes.html", oracoes=oracoes_lista)
 
+
 # ✅ Rota da Liturgia do Dia
 @app.route("/liturgia")
 def liturgia():
-    try:
-        response = requests.get("https://liturgia.up.railway.app/")
-        response.raise_for_status()
-        dados_api = response.json()
+    # Dados de fallback (usados se a API falhar)
+    FALLBACK_LITURGIA = {
+        "data": "16/07/2025",
+        "liturgia": "Bem-aventurada Virgem Maria do Monte Carmelo, Festa",
+        "cor": "Branco",
+        "dia": "Senhor, nós vos pedimos: venha em nosso auxílio a venerável intercessão da gloriosa Virgem Maria...",
+        "oferendas": "Acolhei, Senhor, as orações e oferendas dos vossos fiéis...",
+        "comunhao": "Senhor, vós nos fizestes participantes dos frutos da redenção eterna...",
+        "primeiraLeitura": {
+            "referencia": "Zc 2, 14-17",
+            "titulo": "Leitura da Profecia de Zacarias",
+            "texto": "14“Rejubila, alegra-te, cidade de Sião..."
+        },
+        "segundaLeitura": "Não há segunda leitura hoje!",
+        "salmo": {
+            "referencia": "Lc 1, 46-55",
+            "refrao": "O Poderoso fez por mim maravilhas, e Santo é o seu nome.",
+            "texto": "— A minh’alma engrandece ao Senhor..."
+        },
+        "evangelho": {
+            "referencia": "Mt 12, 46-50",
+            "titulo": "Proclamação do Evangelho de Jesus Cristo ✠ segundo Mateus",
+            "texto": "Naquele tempo, 46enquanto Jesus estava falando às multidões..."
+        },
+        "antifonas": {
+            "entrada": "Todos vós que a Deus temeis, vinde escutar...",
+            "comunhao": "Desde agora as gerações hão de chamar me de bendita..."
+        }
+    }
 
-        def extrair_texto(obj):
-            if isinstance(obj, dict):
-                return {
-                    "titulo": obj.get("titulo", ""),
-                    "texto": obj.get("texto", "Texto não disponível"),
-                    "referencia": obj.get("referencia", "Sem referência"),
-                    "refrao": obj.get("refrao", "")  # agora extrai o refrão também
-                }
+    # Função auxiliar para extrair texto dos campos
+    def extrair_texto(obj):
+        if isinstance(obj, dict):
             return {
-                "titulo": "",
-                "texto": obj or "Texto não disponível",
-                "referencia": "Sem referência",
-                "refrao": ""
+                "titulo": obj.get("titulo", ""),
+                "texto": obj.get("texto", "Texto não disponível"),
+                "referencia": obj.get("referencia", "Sem referência"),
+                "refrao": obj.get("refrao", "")
             }
-
-        # Corrige a data para uso na API do Vaticano (Santo do Dia)
-        data_api = dados_api.get("data", datetime.now().strftime("%d/%m/%Y"))
-        try:
-            data_iso = datetime.strptime(data_api, "%d/%m/%Y").strftime("%Y-%m-%d")
-        except ValueError:
-            data_iso = datetime.now().strftime("%Y-%m-%d")
-
-        dados = {
-            "data": dados_api.get("data"),
-            "titulo": dados_api.get("liturgia", "Liturgia do Dia"),
-            "cor": dados_api.get("cor", "Cor litúrgica não informada"),
-            "dia": dados_api.get("dia", ""),
-            "oferendas": dados_api.get("oferendas", ""),
-            "comunhao": dados_api.get("comunhao", ""),
-            "segundaLeitura": dados_api.get("segundaLeitura", ""),
-            "antifonas": dados_api.get("antifonas", {}),
-            "primeiraLeitura": extrair_texto(dados_api.get("primeiraLeitura")),
-            "salmo": extrair_texto(dados_api.get("salmo")),
-            "evangelho": extrair_texto(dados_api.get("evangelho")),
+        return {
+            "titulo": "",
+            "texto": obj or "Texto não disponível",
+            "referencia": "Sem referência",
+            "refrao": ""
         }
 
-        return render_template("liturgia.html", dados=dados)
-
+    # Tenta buscar da API
+    try:
+        response = requests.get("https://liturgia.up.railway.app/", timeout=10)
+        response.raise_for_status()
+        dados_api = response.json()
     except Exception as e:
-        return f"Erro ao carregar a liturgia: {e}", 500
+        print(f"[AVISO] API de liturgia falhou: {e}. Usando fallback.")
+        dados_api = FALLBACK_LITURGIA
+
+    # Processa a data
+    try:
+        data_obj = datetime.strptime(dados_api.get("data", ""), "%d/%m/%Y")
+        data_iso = data_obj.strftime("%Y-%m-%d")
+    except:
+        data_iso = datetime.now().strftime("%Y-%m-%d")
+
+    
+    # Extrai o salmo do dia
+    salmo_api = dados_api.get("salmo", {})
+    titulo_salmo = salmo_api.get("referencia", "").strip()
+    salmos_do_dia = []  # Agora é uma lista!
+
+    if titulo_salmo:
+        # Função auxiliar: busca por padrão
+        def corresponde(filename_lower, padrao):
+            return re.search(padrao, filename_lower)
+
+        # Caso 1: Magnificat (Lc 1, 46-55) → todos os salmo_102_*.mp3
+        if "Lc 1, 46" in titulo_salmo or "Maria" in titulo_salmo:
+            for s in SALMOS:
+                if "salmo_102" in s['filename'].lower():
+                    salmos_do_dia.append(s)
+
+        # Caso 2: Dn 3 → dn_3.mp3
+        elif "Dn 3" in titulo_salmo:
+            for s in SALMOS:
+                if "dn_3.mp3" == s['filename'].lower():
+                    salmos_do_dia.append(s)
+                    break  # Só tem um
+
+        # Caso 3: Is 12 → isaias12.mp3
+        elif "Is 12" in titulo_salmo:
+            for s in SALMOS:
+                if "isaias12.mp3" == s['filename'].lower():
+                    salmos_do_dia.append(s)
+                    break  # Só tem um
+
+        # Caso 4: Salmo comum numerado (ex: Salmo 23, Salmo 117)
+            
+        elif match := re.search(r'\b(?:Salmo|Sl|Sal)\s+(\d+)', titulo_salmo, re.IGNORECASE):
+            numero = match.group(1)
+            padrao = f"salmo_{numero}_[^p]"  # Qualquer versão que não seja _playback
+            for s in SALMOS:
+                fname = s['filename'].lower()
+                if f"salmo_{numero}" in fname and "playback" not in fname:
+                    salmos_do_dia.append(s)
+            # Se não achou nenhuma sem playback, pega todas
+            if not salmos_do_dia:
+                for s in SALMOS:
+                    if f"salmo_{numero}" in s['filename'].lower():
+                        salmos_do_dia.append(s)
+
+        # Ordena por nome (ex: salmo_117_2 antes de salmo_117_9)
+        salmos_do_dia.sort(key=lambda x: x['filename'])
+
+    # Prepara os dados para o template
+    dados = {
+        "data": dados_api.get("data"),
+        "titulo": dados_api.get("liturgia", "Liturgia do Dia"),
+        "cor": dados_api.get("cor", "Cor não informada"),
+        "dia": dados_api.get("dia", ""),
+        "oferendas": dados_api.get("oferendas", ""),
+        "comunhao": dados_api.get("comunhao", ""),
+        "segundaLeitura": dados_api.get("segundaLeitura", ""),
+        "antifonas": dados_api.get("antifonas", {}),
+        "primeiraLeitura": extrair_texto(dados_api.get("primeiraLeitura")),
+        "salmo": extrair_texto(salmo_api),
+        "evangelho": extrair_texto(dados_api.get("evangelho")),
+        "salmos_do_dia": salmos_do_dia  # ✅ Agora é uma lista
+    }
+
+    # ✅ RETORNO VÁLIDO
+    return render_template("liturgia.html", **dados)
+
 
 @app.route("/terco")
 def terco():
@@ -381,6 +650,11 @@ def terco():
     }
 
     return render_template("terco.html", mistérios=mistérios, oracoes=oracoes)
+
+
 # ✅ Execução da aplicação
+@app.context_processor
+def utility_processor():
+    return dict(formatar_nome_salmo=formatar_nome_salmo)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

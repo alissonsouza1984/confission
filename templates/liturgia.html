@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <title>{{ dados.titulo }}</title>
+  <title>{{ titulo }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <style>
     .card-liturgia {
@@ -42,6 +42,44 @@
     .back-link:hover {
       text-decoration: underline;
     }
+    .audio-player {
+      margin: 1rem auto;
+      max-width: 600px;
+      text-align: center;
+    }
+    .mt-3 {
+      margin-top: 1rem;
+    }
+    /* Estilo para lista de áudios */
+    .lista-audios {
+      margin: 1rem 0;
+    }
+    .item-audio {
+      margin-bottom: 1.5rem;
+      padding: 0.8rem;
+      border: 1px solid #e0d8c8;
+      border-radius: 8px;
+      background-color: #fffef8;
+    }
+    .item-audio strong {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .botoes-download {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .botoes-download a {
+      margin-right: 1rem;
+      color: #8B4513;
+      text-decoration: none;
+    }
+    .botoes-download a:last-child {
+      margin-right: 0;
+    }
+    .botoes-download a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body class="page-body">
@@ -50,65 +88,85 @@
       <img src="{{ url_for('static', filename='img/cristo_pantocrator.jpg') }}" alt="Cristo Pantocrator" />
     </div>
 
-    <div class="titulo-dia">{{ dados.titulo }}</div>
-    <div class="subtitulo">Cor Litúrgica: {{ dados.cor }} — {{ dados.data }}</div>
+    <div class="titulo-dia">{{ titulo }}</div>
+    <div class="subtitulo">Cor Litúrgica: {{ cor }} — {{ data }}</div>
 
-    {% if dados.antifonas.entrada %}
+    {% if antifonas.entrada %}
     <div class="card-liturgia">
       <h3>🔸 Antífona de Entrada</h3>
-      <p>{{ dados.antifonas.entrada }}</p>
+      <p>{{ antifonas.entrada }}</p>
     </div>
     {% endif %}
 
     <div class="card-liturgia">
       <h3>🙏 Oração do Dia</h3>
-      <p>{{ dados.dia }}</p>
+      <p>{{ dia }}</p>
     </div>
 
     <div class="card-liturgia">
       <h3>📖 Primeira Leitura</h3>
-      <p><strong>{{ dados.primeiraLeitura.referencia }}</strong> – {{ dados.primeiraLeitura.titulo }}</p>
-      <p>{{ dados.primeiraLeitura.texto }}</p>
+      <p><strong>{{ primeiraLeitura.referencia }}</strong> – {{ primeiraLeitura.titulo }}</p>
+      <p>{{ primeiraLeitura.texto }}</p>
     </div>
 
-    {% if dados.segundaLeitura and "Não há" not in dados.segundaLeitura %}
+    {% if segundaLeitura and "Não há" not in segundaLeitura %}
     <div class="card-liturgia">
       <h3>📘 Segunda Leitura</h3>
-      <p>{{ dados.segundaLeitura }}</p>
+      <p>{{ segundaLeitura }}</p>
     </div>
     {% endif %}
 
     <div class="card-liturgia">
-    <h3>🎵 Salmo</h3>
-    <p><strong>{{ dados.salmo.referencia }}</strong></p>
+      <h3>🎶 Salmo Responsorial do Dia</h3>
+      <p><strong>{{ salmo.referencia }}</strong></p>
+      <p><em>Refrão: {{ salmo.refrao }}</em></p>
+      <p>{{ salmo.texto.replace('—', '<br>—') | safe }}</p>
 
-     {% if dados.salmo.refrao %}
-    <p><strong>R:</strong> <strong>{{ dados.salmo.refrao }}</strong></p>
-    {% endif %}
-    <p>{{ dados.salmo.texto.replace('—', '<br>—') | safe }}</p>
+      <!-- === PLAYER DE SALMOS DO DIA (MÚLTIPLAS VERSÕES) === -->
+      {% if salmos_do_dia %}
+      <div class="lista-audios">
+        <p><small>🔊 Clique para ouvir e escolher a versão:</small></p>
+        {% for salmo in salmos_do_dia %}
+        <div class="item-audio">
+          <strong>{{ formatar_nome_salmo(salmo.filename) }}</strong>
+          <div class="audio-player">
+            <audio controls style="width: 100%;">
+              <source src="{{ url_for('play_salmo', filename=salmo.filename) }}" type="audio/mpeg">
+              Seu navegador não suporta áudio.
+            </audio>
+          </div>
+          <div class="botoes-download">
+            <a href="{{ url_for('download_mp3', filename=salmo.filename) }}">⬇️ Baixar MP3</a>
+            <a href="{{ url_for('download_doc', filename=salmo.filename) }}">📄 Baixar Cifra</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p><small><em>Nenhuma gravação disponível para este salmo.</em></small></p>
+      {% endif %}
     </div>
- 
 
     <div class="card-liturgia">
       <h3>✠ Evangelho</h3>
-      <p><strong>{{ dados.evangelho.referencia }}</strong> – {{ dados.evangelho.titulo }}</p>
-      <p>{{ dados.evangelho.texto }}</p>
+      <p><strong>{{ evangelho.referencia }}</strong> – {{ evangelho.titulo }}</p>
+      <p>{{ evangelho.texto }}</p>
     </div>
 
     <div class="card-liturgia">
       <h3>🕊️ Ofertório</h3>
-      <p>{{ dados.oferendas }}</p>
+      <p>{{ oferendas }}</p>
     </div>
 
     <div class="card-liturgia">
       <h3>💟 Comunhão</h3>
-      <p>{{ dados.comunhao }}</p>
+      <p>{{ comunhao }}</p>
     </div>
 
-    {% if dados.antifonas.comunhao %}
+    {% if antifonas.comunhao %}
     <div class="card-liturgia">
       <h3>🎶 Antífona de Comunhão</h3>
-      <p>{{ dados.antifonas.comunhao }}</p>
+      <p>{{ antifonas.comunhao }}</p>
     </div>
     {% endif %}
 
@@ -116,4 +174,3 @@
   </div>
 </body>
 </html>
-

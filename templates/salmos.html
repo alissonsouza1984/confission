@@ -1,0 +1,268 @@
+  <!DOCTYPE html>
+  <html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Salmos e Cifras Sacras</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/cristo_pantocrator.jpg') }}" type="image/x-icon">
+    <style>
+      body {
+        background-color: #0d0b14;
+        color: #e0cda9;
+        font-family: 'Times New Roman', serif;
+        margin: 0;
+        padding: 0;
+        line-height: 1.8;
+        background-image: linear-gradient(135deg, #1a1a2e 0%, #0e0e1a 100%);
+      }
+
+      header {
+        background-color: #161625;
+        color: gold;
+        text-align: center;
+        padding: 2.8rem 1rem;
+        border-bottom: 3px solid rgba(255, 215, 0, 0.6);
+        box-shadow: 0 4px 20px rgba(255, 215, 0, 0.1);
+      }
+
+      header h1 {
+        font-size: 2.8rem;
+        margin: 0;
+        letter-spacing: 2px;
+        text-shadow: 2px 2px 8px #000, 0 0 12px rgba(255, 215, 0, 0.5);
+      }
+
+      header p {
+        margin-top: 0.5rem;
+        font-style: italic;
+        color: #d4af37;
+      }
+
+      .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 2rem;
+      }
+
+      .salmo-item {
+        background-color: #1f1f33;
+        margin-bottom: 1.4rem;
+        padding: 1.6rem;
+        border-left: 6px solid gold;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      }
+
+      .salmo-item:hover {
+        transform: translateY(-4px);
+        background-color: #272741;
+        box-shadow: 0 8px 24px rgba(255, 215, 0, 0.15);
+      }
+
+      .salmo-nome {
+        font-size: 1.5rem;
+        color: #fffef7;
+        margin: 0 0 0.8rem 0;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px #000;
+      }
+
+      /* Player personalizado */
+      .audio-player {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background-color: #2d2d44;
+        padding: 0.8rem;
+        border-radius: 8px;
+        border: 1px solid #d4af37;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+      }
+
+      .play-btn {
+        background-color: #d4af37;
+        color: #0e0e1a;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .play-btn:hover {
+        background-color: #b8860b;
+        transform: scale(1.1);
+      }
+
+      .audio-info {
+        flex: 1;
+        font-size: 0.95rem;
+        color: #e0cda9;
+      }
+
+      .loading {
+        display: none;
+        color: #d4af37;
+        font-style: italic;
+        margin-left: 10px;
+      }
+
+      .download-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+
+      .btn {
+        background-color: #d4af37;
+        color: #0e0e1a;
+        border: none;
+        padding: 0.6rem 1.1rem;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .btn:hover {
+        background-color: #b8860b;
+        color: white;
+        transform: scale(1.05);
+      }
+
+      .empty-state {
+        text-align: center;
+        color: #a0a0b0;
+        font-style: italic;
+        padding: 3rem;
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem;
+        margin-top: 3rem;
+        color: #b8a594;
+        font-size: 0.9rem;
+        border-top: 1px solid gold;
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <h1>🎵 Salmos e Cifras Sacras</h1>
+      <p>Para Adoração, Liturgia e Oração Contínua</p>
+    </header>
+
+    <div class="container">
+
+      {% if salmos %}
+        {% for salmo in salmos %}
+          <div class="salmo-item">
+            <h3 class="salmo-nome">{{ salmo['nome'] }}</h3>
+
+            <!-- Player personalizado -->
+            <div class="audio-player">
+              <button class="play-btn" onclick="togglePlay(this, '{{ url_for('play_salmo', filename=salmo.filename) }}')">
+                ▶
+              </button>
+              <div class="audio-info">
+                <div>{{ salmo.nome }}</div>
+                <div class="loading" id="loading-{{ salmo['id'] }}">Carregando...</div>
+              </div>
+            </div>
+
+            <!-- Botões de download -->
+            <div class="download-group">
+              <a href="{{ url_for('download_mp3', filename=salmo.filename) }}" class="btn">
+                ⬇️ Baixar MP3
+              </a>
+              <a href="{{ url_for('download_doc', filename=salmo.filename) }}" class="btn">
+                📄 Baixar Cifra
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <p>Nenhum salmo disponível no momento.</p>
+        </div>
+      {% endif %}
+
+    </div>
+
+    <script>
+      function togglePlay(button, streamUrl) {
+        // Encontra o player de áudio atual
+        const container = button.closest('.audio-player');
+        const loading = container.querySelector('.loading');
+        let audio = container.querySelector('audio');
+
+        if (!audio) {
+          // Primeiro clique: cria o áudio
+          audio = new Audio();
+          container.appendChild(audio);
+          audio.src = streamUrl;
+
+          // Mostra loading
+          loading.style.display = 'block';
+
+          audio.oncanplay = () => {
+            loading.style.display = 'none';
+            audio.play();
+            button.innerHTML = '❚❚';
+          };
+
+          audio.onerror = () => {
+            loading.style.display = 'none';
+            alert('Erro ao carregar o áudio. Tente novamente.');
+          };
+
+          audio.onended = () => {
+            button.innerHTML = '▶';
+          };
+
+        } else if (audio.paused) {
+          // Continua reprodução
+          loading.style.display = 'block';
+          audio.play().then(() => {
+            loading.style.display = 'none';
+            button.innerHTML = '❚❚';
+          }).catch(err => {
+            loading.style.display = 'none';
+            console.error("Erro ao reproduzir:", err);
+            alert("Falha ao reproduzir áudio.");
+          });
+        } else {
+          // Pausa
+          audio.pause();
+          button.innerHTML = '▶';
+        }
+      }
+    </script>
+
+    <footer>
+      &copy; {{ ano }} Portal da Música Católica.<br>
+      "Teu amor, Senhor, é eterno: não abandones a obra das tuas mãos." — Salmo 137(138),8
+    </footer>
+
+  </body>
+  </html>
