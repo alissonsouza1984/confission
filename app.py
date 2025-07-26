@@ -462,138 +462,159 @@ def oracoes():
     return render_template("oracoes.html", oracoes=oracoes_lista)
 
 
-# ✅ Rota da Liturgia do Dia
 @app.route("/liturgia")
 def liturgia():
-    # Dados de fallback (usados se a API falhar)
+    import re
+    from datetime import datetime
+    import requests
+
+    data_param = request.args.get("data")
+
     FALLBACK_LITURGIA = {
         "data": "16/07/2025",
         "liturgia": "Bem-aventurada Virgem Maria do Monte Carmelo, Festa",
         "cor": "Branco",
-        "dia": "Senhor, nós vos pedimos: venha em nosso auxílio a venerável intercessão da gloriosa Virgem Maria...",
-        "oferendas": "Acolhei, Senhor, as orações e oferendas dos vossos fiéis...",
-        "comunhao": "Senhor, vós nos fizestes participantes dos frutos da redenção eterna...",
-        "primeiraLeitura": {
-            "referencia": "Zc 2, 14-17",
-            "titulo": "Leitura da Profecia de Zacarias",
-            "texto": "14“Rejubila, alegra-te, cidade de Sião..."
+        "antifonas": {
+            "entrada": "Todos vós que a Deus temeis, vinde escutar..."
         },
-        "segundaLeitura": "Não há segunda leitura hoje!",
-        "salmo": {
-            "referencia": "Lc 1, 46-55",
-            "refrao": "O Poderoso fez por mim maravilhas, e Santo é o seu nome.",
-            "texto": "— A minh’alma engrandece ao Senhor..."
+        "oracoes": {
+            "coleta": "Senhor, nós vos pedimos: venha em nosso auxílio...",
+            "oferendas": "Acolhei, Senhor, as orações e oferendas dos vossos fiéis...",
+            "comunhao": "Senhor, vós nos fizestes participantes dos frutos da redenção eterna..."
         },
-        "evangelho": {
-            "referencia": "Mt 12, 46-50",
-            "titulo": "Proclamação do Evangelho de Jesus Cristo ✠ segundo Mateus",
-            "texto": "Naquele tempo, 46enquanto Jesus estava falando às multidões..."
+        "leituras": {
+            "primeiraLeitura": [{
+                "referencia": "Zc 2, 14-17",
+                "titulo": "Leitura da Profecia de Zacarias",
+                "texto": "Rejubila, alegra-te, cidade de Sião..."
+            }],
+            "salmo": [{
+                "referencia": "Lc 1, 46-55",
+                "refrao": "O Poderoso fez por mim maravilhas, e Santo é o seu nome.",
+                "texto": "A minh’alma engrandece ao Senhor..."
+            }],
+            "evangelho": [{
+                "referencia": "Mt 12, 46-50",
+                "titulo": "Proclamação do Evangelho de Jesus Cristo ✠ segundo Mateus",
+                "texto": "Enquanto Jesus estava falando às multidões..."
+            }]
         },
         "antifonas": {
-            "entrada": "Todos vós que a Deus temeis, vinde escutar...",
-            "comunhao": "Desde agora as gerações hão de chamar me de bendita..."
+            "comunhao": "Desde agora as gerações hão de chamar-me de bendita..."
         }
     }
 
-    # Função auxiliar para extrair texto dos campos
-    def extrair_texto(obj):
-        if isinstance(obj, dict):
-            return {
-                "titulo": obj.get("titulo", ""),
-                "texto": obj.get("texto", "Texto não disponível"),
-                "referencia": obj.get("referencia", "Sem referência"),
-                "refrao": obj.get("refrao", "")
-            }
-        return {
-            "titulo": "",
-            "texto": obj or "Texto não disponível",
-            "referencia": "Sem referência",
-            "refrao": ""
-        }
-
-    # Tenta buscar da API
+    # Processa data
     try:
-        response = requests.get("https://liturgia.up.railway.app/", timeout=10)
-        response.raise_for_status()
-        dados_api = response.json()
+        if data_param:
+            data_obj = datetime.strptime(data_param, "%Y-%m-%d")
+        else:
+            data_obj = datetime.today()
+
+        dia = f"{data_obj.day:02d}"
+        mes = f"{data_obj.month:02d}"
+        ano = f"{data_obj.year}"
+        url = f"https://liturgia.up.railway.app/v2/?dia={dia}&mes={mes}&ano={ano}"
     except Exception as e:
-        print(f"[AVISO] API de liturgia falhou: {e}. Usando fallback.")
+        print(f"[ERRO] Falha ao processar data. Usando fallback. Detalhe: {e}")
+        url = None
+
+    # Busca API
+    try:
+        if url:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            dados_api = response.json()
+        else:
+            raise Exception("URL inválida")
+    except Exception as e:
+        print(f"[AVISO] API falhou: {e}. Usando fallback.")
         dados_api = FALLBACK_LITURGIA
 
-    # Processa a data
-    try:
-        data_obj = datetime.strptime(dados_api.get("data", ""), "%d/%m/%Y")
-        data_iso = data_obj.strftime("%Y-%m-%d")
-    except:
-        data_iso = datetime.now().strftime("%Y-%m-%d")
+    # Formatação das leituras
+    primeira_leitura = ""
+    leituras = dados_api.get("leituras", {})
+    primeira_leitura_lista = leituras.get("primeiraLeitura", [])
+    if primeira_leitura_lista:
+        pl = primeira_leitura_lista[0]
+        primeira_leitura = f"<strong>{pl.get('referencia','')}</strong> – {pl.get('titulo','')}<br>{pl.get('texto','')}"
 
-    
-    # Extrai o salmo do dia
-    salmo_api = dados_api.get("salmo", {})
-    titulo_salmo = salmo_api.get("referencia", "").strip()
-    salmos_do_dia = []  # Agora é uma lista!
+    salmo_obj = leituras.get("salmo", [{}])[0]
+    salmo_referencia = salmo_obj.get("referencia", "")
+    salmo_refrao = salmo_obj.get("refrao", "")
+    salmo_texto = salmo_obj.get("texto", "")
 
-    if titulo_salmo:
-        # Função auxiliar: busca por padrão
-        def corresponde(filename_lower, padrao):
-            return re.search(padrao, filename_lower)
+    evangelho = ""
+    evangelho_lista = leituras.get("evangelho", [])
+    if evangelho_lista:
+        ev = evangelho_lista[0]
+        evangelho = f"<strong>{ev.get('referencia','')}</strong> – {ev.get('titulo','')}<br>{ev.get('texto','')}"
 
-        # Caso 1: Magnificat (Lc 1, 46-55) → todos os salmo_102_*.mp3
-        if "Lc 1, 46" in titulo_salmo or "Maria" in titulo_salmo:
+    # Oracoes
+    oracoes = dados_api.get("oracoes", {})
+    coleta = oracoes.get("coleta", "")
+    oferendas = oracoes.get("oferendas", "")
+    comunhao = oracoes.get("comunhao", "")
+
+    # Antifonas
+    antifonas = dados_api.get("antifonas", {})
+    antifona_entrada = antifonas.get("entrada", "")
+    antifona_comunhao = antifonas.get("comunhao", "")
+
+    # Data para exibição
+    data_exibicao = dados_api.get("data", data_param or datetime.today().strftime("%d/%m/%Y"))
+
+    # Título e cor
+    titulo = dados_api.get("liturgia", "Liturgia do Dia")
+    cor = dados_api.get("cor", "Cor não informada")
+
+    # Selecionar salmos do dia para áudio (usando padrão parecido com antes)
+    salmos_do_dia = []
+    import re
+
+    if salmo_referencia:
+        numero_match = re.search(r'\b(\d+)\b', salmo_referencia)
+        numero = numero_match.group(1) if numero_match else None
+
+        if numero:
             for s in SALMOS:
-                if "salmo_102" in s['filename'].lower():
+                if f"salmo_{numero}" in s['filename'].lower():
                     salmos_do_dia.append(s)
-
-        # Caso 2: Dn 3 → dn_3.mp3
-        elif "Dn 3" in titulo_salmo:
+        if "Dn 3" in salmo_referencia:
             for s in SALMOS:
                 if "dn_3.mp3" == s['filename'].lower():
                     salmos_do_dia.append(s)
-                    break  # Só tem um
-
-        # Caso 3: Is 12 → isaias12.mp3
-        elif "Is 12" in titulo_salmo:
+                    break
+        if "Is 12" in salmo_referencia:
             for s in SALMOS:
                 if "isaias12.mp3" == s['filename'].lower():
                     salmos_do_dia.append(s)
-                    break  # Só tem um
+                    break
+    salmos_do_dia.sort(key=lambda x: x['filename'])
 
-        # Caso 4: Salmo comum numerado (ex: Salmo 23, Salmo 117)
-            
-        elif match := re.search(r'\b(?:Salmo|Sl|Sal)\s+(\d+)', titulo_salmo, re.IGNORECASE):
-            numero = match.group(1)
-            padrao = f"salmo_{numero}_[^p]"  # Qualquer versão que não seja _playback
-            for s in SALMOS:
-                fname = s['filename'].lower()
-                if f"salmo_{numero}" in fname and "playback" not in fname:
-                    salmos_do_dia.append(s)
-            # Se não achou nenhuma sem playback, pega todas
-            if not salmos_do_dia:
-                for s in SALMOS:
-                    if f"salmo_{numero}" in s['filename'].lower():
-                        salmos_do_dia.append(s)
+    return render_template(
+        "liturgia.html",
+        titulo=titulo,
+        cor=cor,
+        data=data_exibicao,
+        oracao_dia=coleta,
+        oferendas=oferendas,
+        comunhao=comunhao,
+        antifona_entrada=antifona_entrada,
+        antifona_comunhao=antifona_comunhao,
+        primeira_leitura=primeira_leitura,
+        salmo={
+            "referencia": salmo_referencia,
+            "refrao": salmo_refrao,
+            "texto": salmo_texto
+        },
+        evangelho=evangelho,
+        salmos_do_dia=salmos_do_dia,
+        api_falhou=(dados_api == FALLBACK_LITURGIA),
+        formatar_nome_salmo=formatar_nome_salmo,
+    )
 
-        # Ordena por nome (ex: salmo_117_2 antes de salmo_117_9)
-        salmos_do_dia.sort(key=lambda x: x['filename'])
 
-    # Prepara os dados para o template
-    dados = {
-        "data": dados_api.get("data"),
-        "titulo": dados_api.get("liturgia", "Liturgia do Dia"),
-        "cor": dados_api.get("cor", "Cor não informada"),
-        "dia": dados_api.get("dia", ""),
-        "oferendas": dados_api.get("oferendas", ""),
-        "comunhao": dados_api.get("comunhao", ""),
-        "segundaLeitura": dados_api.get("segundaLeitura", ""),
-        "antifonas": dados_api.get("antifonas", {}),
-        "primeiraLeitura": extrair_texto(dados_api.get("primeiraLeitura")),
-        "salmo": extrair_texto(salmo_api),
-        "evangelho": extrair_texto(dados_api.get("evangelho")),
-        "salmos_do_dia": salmos_do_dia  # ✅ Agora é uma lista
-    }
-
-    # ✅ RETORNO VÁLIDO
-    return render_template("liturgia.html", **dados)
 
 
 @app.route("/terco")

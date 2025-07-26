@@ -664,6 +664,66 @@ if __name__ == "__main__":
 
 
 ################################################################################
+### ARQUIVO: compilar_projeto.py
+################################################################################
+
+import os
+
+# Lista inicial de arquivos principais
+arquivos = [
+    "app.py",
+    "compilar_projeto.py",
+    "Dockerfile",
+    "README.md",
+    "render.yaml",
+    "requirements.txt"
+]
+
+# Função para adicionar todos os arquivos de uma pasta (recursivamente)
+def adicionar_arquivos_de_pasta(pasta, extensoes=None):
+    caminhos = []
+    for raiz, _, arquivos_local in os.walk(pasta):
+        for nome in arquivos_local:
+            caminho_completo = os.path.join(raiz, nome)
+            if extensoes:
+                if any(nome.endswith(ext) for ext in extensoes):
+                    caminhos.append(caminho_completo)
+            else:
+                caminhos.append(caminho_completo)
+    return caminhos
+
+# Adiciona arquivos das pastas estáticas e templates
+arquivos += adicionar_arquivos_de_pasta("static/audio", extensoes=[".py", ".mp3"])
+arquivos += adicionar_arquivos_de_pasta("static/css", extensoes=[".css"])
+arquivos += adicionar_arquivos_de_pasta("static/img", extensoes=[".jpg", ".png"])
+arquivos += adicionar_arquivos_de_pasta("static/text", extensoes=[".py", ".mp3", ".txt"])
+arquivos += adicionar_arquivos_de_pasta("templates", extensoes=[".html"])
+
+# Nome do arquivo final de saída
+saida = "projeto_compilado.txt"
+
+# Criar o arquivo final com todos os códigos
+with open(saida, "w", encoding="utf-8") as f_out:
+    for caminho in arquivos:
+        if os.path.exists(caminho):
+            f_out.write(f"{'#' * 80}\n")
+            f_out.write(f"### ARQUIVO: {caminho}\n")
+            f_out.write(f"{'#' * 80}\n\n")
+            try:
+                # Tenta abrir como texto
+                with open(caminho, "r", encoding="utf-8") as f_in:
+                    f_out.write(f_in.read())
+            except Exception as e:
+                # Se não for arquivo de texto (ex: mp3), apenas registra o nome
+                f_out.write(f"# Arquivo binário ou não legível como texto: {caminho}\n")
+            f_out.write("\n\n")
+        else:
+            f_out.write(f"# Arquivo não encontrado: {caminho}\n\n")
+
+print(f"\n✅ Arquivo '{saida}' criado com sucesso.")
+
+
+################################################################################
 ### ARQUIVO: Dockerfile
 ################################################################################
 
@@ -736,6 +796,74 @@ gunicorn
 requests
 beautifulsoup4==4.12.3
 lxml==5.2.1
+
+
+################################################################################
+### ARQUIVO: static/audio/miserere_mei_deus.mp3
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/audio/miserere_mei_deus.mp3
+
+
+################################################################################
+### ARQUIVO: static/audio/baixar/baixar-mp3.py
+################################################################################
+
+from pytube import YouTube
+from moviepy.editor import AudioFileClip
+import os
+
+def baixar_mp3(link):
+    try:
+        yt = YouTube(link)
+        print(f"Baixando: {yt.title}")
+
+        audio_stream = yt.streams.filter(only_audio=True).first()
+        arquivo_temp = audio_stream.download(filename="temp_audio.mp4")
+
+        nome_arquivo_mp3 = yt.title.replace(" ", "_").replace("/", "_") + ".mp3"
+        clip = AudioFileClip(arquivo_temp)
+        clip.write_audiofile(nome_arquivo_mp3)
+
+        clip.close()
+        os.remove(arquivo_temp)
+
+        print(f"Download completo: {nome_arquivo_mp3}")
+    except Exception as e:
+        print(f"Erro ao baixar: {e}")
+
+# 🟢 Pergunta o link
+if __name__ == "__main__":
+    link = input("Cole o link do vídeo do YouTube: ").strip()
+    baixar_mp3(link)
+
+
+################################################################################
+### ARQUIVO: static/audio/terco/dor.mp3
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/audio/terco/dor.mp3
+
+
+################################################################################
+### ARQUIVO: static/audio/terco/lum.mp3
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/audio/terco/lum.mp3
+
+
+################################################################################
+### ARQUIVO: static/audio/terco/goz.mp3
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/audio/terco/goz.mp3
+
+
+################################################################################
+### ARQUIVO: static/audio/terco/glo.mp3
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/audio/terco/glo.mp3
 
 
 ################################################################################
@@ -983,6 +1111,596 @@ blockquote {
 
 
 ################################################################################
+### ARQUIVO: static/img/cristo_pantocrator.jpg
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/cristo_pantocrator.jpg
+
+
+################################################################################
+### ARQUIVO: static/img/terco/espirito_santo.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/espirito_santo.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/anunciacao.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/anunciacao.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/horto.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/horto.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/nascimento.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/nascimento.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/acoites.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/acoites.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/espinhos.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/espinhos.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/reino.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/reino.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/crucificacao.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/crucificacao.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/visitacao.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/visitacao.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/apresentacao.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/apresentacao.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/bodas.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/bodas.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/ascensao.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/ascensao.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/eucaristia.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/eucaristia.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/cruz.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/cruz.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/assuncao.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/assuncao.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/transfiguracao.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/transfiguracao.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/coroacao.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/coroacao.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/templo.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/templo.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/batismo.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/batismo.png
+
+
+################################################################################
+### ARQUIVO: static/img/terco/ressurreicao.png
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/img/terco/ressurreicao.png
+
+
+################################################################################
+### ARQUIVO: static/text/salmo_22_10_playback.mp3
+################################################################################
+
+# Arquivo binário ou não legível como texto: static/text/salmo_22_10_playback.mp3
+
+
+################################################################################
+### ARQUIVO: static/text/salmos_links.txt
+################################################################################
+
+# Foram encontrados 189 links MP3 e 156 links DOC
+
+## Links MP3:
+http://www.portaldamusicacatolica.com.br/salmos/dn_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/vigiliapascal_3_exodo15.mp3
+http://www.portaldamusicacatolica.com.br/salmos/vigiliapascal_5_isaias12.mp3
+http://www.portaldamusicacatolica.com.br/salmos/isaias12.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_8_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_8.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_14_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_14.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_15_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/vigiliapascal_2_salmo15.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_15.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_15_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_16.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_17.mp3
+http://www.portaldamusicacatolica.com.br/salmos/vigiliapascal_6_salmo18.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_18_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_18.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_18b.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_21_7.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_21_7_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_21.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_21_5.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_22_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_22_10.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_22_10_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_22_9.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_22_9_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_22_5.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_23_5.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_24_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_26_5.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_26.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_23_7.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_23_7_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_23_6.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_23_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_24_6.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_24_6_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_26_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_26_4_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_26_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_26_3_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_28.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_28_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_28_2_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_29.mp3
+http://www.portaldamusicacatolica.com.br/salmos/vigiliapascal_4_salmo29.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_32_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_32_9.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_32_5.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_32_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_32_7.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_32_6.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_12.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_8.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_6.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_11.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_9.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_39_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_39_2_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_39.mp3
+http://www.portaldamusicacatolica.com.br/salmos/vigiliapascal_7_salmo41.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_44.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_44_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_44_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_45.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_46_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_46.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_50.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_50_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_53_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_53.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_61_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_61.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_62.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_64.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_65_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_66_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_66.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_67_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_68_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_68_3_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_70.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_71_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_71.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_77.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_77_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_79_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_79_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_79_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_79_5.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_79_5_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_79_6.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_79_6_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_84_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_84.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_85_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_89.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_89_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_89_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_90_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_90_3_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_91_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_92.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_92_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_92_2_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_94_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_94_6.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_94_6_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_94_7.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_94_7_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_94.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_95_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_95_5.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_95_5_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_95_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_95_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_97_7.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_97_6.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_97_6_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_97_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_97_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_97_5.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_99.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_102_6.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_102_6_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_102_5.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_102_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/vigiliapascal_1_salmo103.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_103_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_103.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_109.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_111.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_112.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_112_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_114_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_114_3_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_114.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_115_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_115_2_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_117_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_117_7.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_117_9.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_117_9_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_117_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_117_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_118_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_118_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_118_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_118_4_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_120_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_121_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_121_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_122.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_125_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_125_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_125_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_127_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_127_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_127.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_127_5.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_127_5_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_129_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_129_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_129_2_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_137_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_137.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_138_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_138_2_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_138.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144_5.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144_6.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144_2.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144_7.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_6.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_4.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_9.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_11.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_11_playback.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_3.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_8.mp3
+http://www.portaldamusicacatolica.com.br/salmos/salmo_147.mp3
+
+## Links DOC (Cifras):
+http://www.portaldamusicacatolica.com.br/salmos/dn_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/vigilia_pascal_7salmos.doc
+http://www.portaldamusicacatolica.com.br/salmos/responsorio_isaias12.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_8_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_8.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_14_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_14.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_15_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_15.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_15_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_23_5.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_16.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_17.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_18_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_18.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_18b.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_21_7.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_21.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_21_5.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_22_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_22_10.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_22_9.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_22_5.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_24_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_26_5.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_26.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_23_7.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_23_6.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_23_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_24_6.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_26_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_26_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_28.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_28_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_29.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_32_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_32_9.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_32_5.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_32_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_32_7.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_32_6.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_12.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_8.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_6.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_11.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_33_9.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_39_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_39.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_44.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_44_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_44_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_45.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_46_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_46.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_50.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_50_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_53_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_53.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_61_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_61.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_62.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_64.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_65_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_66_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_66.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_67_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_68_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_70.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_71_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_71.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_77.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_77_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_79_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_79_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_79_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_79_5.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_79_6.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_84_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_84.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_85_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_89.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_89_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_89_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_90_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_91_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_92.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_92_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_94_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_94_6.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_94_7.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_94.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_95_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_95_5.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_95_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_95_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_97_7.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_97_6.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_97_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_97_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_97_5.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_99.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_102_6.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_102_5.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_102_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_103_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_103.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_109.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_111.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_112.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_112_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_114_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_114.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_115_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_117_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_117_7.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_117_9.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_117_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_117_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_118_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_118_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_118_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_120_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_121_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_121_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_122.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_125_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_125_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_125_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_127_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_127_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_127.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_127_5.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_129_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_129_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_137_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_137.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_138_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_138.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144_5.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144_6.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144_2.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_144_7.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_6.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_4.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_9.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_11.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_3.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_145_8.doc
+http://www.portaldamusicacatolica.com.br/salmos/salmo_147.doc
+
+
+################################################################################
+### ARQUIVO: static/text/extrator_links.py
+################################################################################
+
+# static/text/extrator_links.py
+
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+import os
+
+# URL do site
+URL = 'http://www.portaldamusicacatolica.com.br/salmoonline_antigos.asp'
+
+# Caminho absoluto para salvar o arquivo
+OUTPUT_FILE = os.path.join(os.path.dirname(__file__), 'salmos_links.txt')
+
+# Headers realistas
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Accept-Encoding': 'gzip, deflate',
+    'Connection': 'keep-alive',
+    'Referer': 'http://www.google.com/',
+    'DNT': '1',
+}
+
+def gerar_lista_links():
+    print(f"[INFO] Acessando: {URL}")
+    try:
+        response = requests.get(URL, headers=HEADERS, timeout=15, allow_redirects=True)
+        response.raise_for_status()
+        print(f"[INFO] Status: {response.status_code}")
+    except requests.RequestException as e:
+        print(f"[ERRO] Falha ao acessar o site: {e}")
+        return
+
+    try:
+        soup = BeautifulSoup(response.content, 'html.parser')
+    except Exception as e:
+        print(f"[ERRO] Falha ao analisar o HTML: {e}")
+        return
+
+    # Extração de links MP3 e DOC
+    mp3_links = []
+    doc_links = []
+
+    for a in soup.find_all('a', href=True):
+        href = a['href'].strip()
+        if not href:
+            continue
+        full_url = urljoin(URL, href)
+        if full_url.lower().endswith('.mp3'):
+            mp3_links.append(full_url)
+        elif full_url.lower().endswith('.doc'):
+            doc_links.append(full_url)
+
+    # Remover duplicatas
+    mp3_links = list(dict.fromkeys(mp3_links))
+    doc_links = list(dict.fromkeys(doc_links))
+
+    # Salvar no arquivo
+    try:
+        with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+            f.write(f'# Foram encontrados {len(mp3_links)} links MP3 e {len(doc_links)} links DOC\n\n')
+            f.write('## Links MP3:\n')
+            for link in mp3_links:
+                f.write(link + '\n')
+            f.write('\n## Links DOC (Cifras):\n')
+            for link in doc_links:
+                f.write(link + '\n')
+
+        print(f"[SUCESSO] Arquivo '{OUTPUT_FILE}' gerado com {len(mp3_links)} MP3 e {len(doc_links)} DOC.")
+    except Exception as e:
+        print(f"[ERRO] Falha ao salvar o arquivo: {e}")
+
+if __name__ == "__main__":
+    gerar_lista_links()
+
+################################################################################
 ### ARQUIVO: templates/pdf_template.html
 ################################################################################
 
@@ -1187,7 +1905,7 @@ blockquote {
 
 <div class="card-terco">
   <h3>1. Sinal da Cruz</h3>
-  <p>Em nome do Pai, e do Filho e do Espírito Santo. Amém.</p>
+  <p>Pelo sinal da santa cruz, livrai-nos, Deus, nosso Senhor, dos nossos inimigos. Em nome do Pai, e do Filho, e do Espírito Santo. Amém.</p>
   <div class="passo-a-passo">
     ✅ Toque a testa no "Pai", o peito no "Filho", o ombro esquerdo e depois o direito no "Espírito Santo".
   </div>
@@ -2024,6 +2742,7 @@ blockquote {
 </body>
 </html>
 
+
 ################################################################################
 ### ARQUIVO: templates/salmos.html
 ################################################################################
@@ -2595,6 +3314,36 @@ blockquote {
     .mt-3 {
       margin-top: 1rem;
     }
+    /* Estilo para lista de áudios */
+    .lista-audios {
+      margin: 1rem 0;
+    }
+    .item-audio {
+      margin-bottom: 1.5rem;
+      padding: 0.8rem;
+      border: 1px solid #e0d8c8;
+      border-radius: 8px;
+      background-color: #fffef8;
+    }
+    .item-audio strong {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .botoes-download {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .botoes-download a {
+      margin-right: 1rem;
+      color: #8B4513;
+      text-decoration: none;
+    }
+    .botoes-download a:last-child {
+      margin-right: 0;
+    }
+    .botoes-download a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body class="page-body">
@@ -2632,62 +3381,35 @@ blockquote {
     {% endif %}
 
     <div class="card-liturgia">
-      <h3>Salmo Responsorial do Dia</h3>
+      <h3>🎶 Salmo Responsorial do Dia</h3>
       <p><strong>{{ salmo.referencia }}</strong></p>
       <p><em>Refrão: {{ salmo.refrao }}</em></p>
       <p>{{ salmo.texto.replace('—', '<br>—') | safe }}</p>
 
-      <!-- Áudios de outros salmos (opcional) -->
-      {% if salmos_do_dia %}
-        <p><strong>Áudios disponíveis:</strong></p>
-        <ul style="list-style: none; padding: 0;">
-          {% for salmo in salmos_do_dia %}
-            <li style="margin-bottom: 10px;">
-              <strong>{{ formatar_nome_salmo(salmo.filename) }}</strong>
-              <audio controls style="margin-left: 10px;">
-                <source src="{{ url_for('play_salmo', filename=salmo.filename) }}" type="audio/mpeg">
-                Seu navegador não suporta áudio.
-              </audio>
-            </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p><em>Nenhum áudio disponível para o Salmo de hoje.</em></p>
-      {% endif %}
-
       <!-- === PLAYER DE SALMOS DO DIA (MÚLTIPLAS VERSÕES) === -->
       {% if salmos_do_dia %}
-      <div class="card-liturgia">
-        <h3>🎶 Áudios do Salmo do Dia</h3>
+      <div class="lista-audios">
         <p><small>🔊 Clique para ouvir e escolher a versão:</small></p>
-        <div style="margin: 1rem 0;">
-          {% for salmo in salmos_do_dia %}
-          <div style="margin-bottom: 1.5rem; padding: 0.8rem; border: 1px solid #e0d8c8; border-radius: 8px; background-color: #fffef8;">
-            <strong>{{ formatar_nome_salmo(salmo.filename) }}</strong>
-            <div class="audio-player" style="margin-top: 0.5rem;">
-              <audio controls style="width: 100%;">
-                <source src="{{ url_for('play_salmo', filename=salmo.filename) }}" type="audio/mpeg">
-                Seu navegador não suporta áudio.
-              </audio>
-            </div>
-            <div style="margin-top: 0.5rem; font-size: 0.9rem;">
-              <a href="{{ url_for('download_mp3', filename=salmo.filename) }}" style="margin-right: 1rem; color: #8B4513;">
-                ⬇️ Baixar MP3
-              </a>
-              <a href="{{ url_for('download_doc', filename=salmo.filename) }}" style="color: #2C5530;">
-                📄 Baixar Cifra
-              </a>
-            </div>
+        {% for salmo in salmos_do_dia %}
+        <div class="item-audio">
+          <strong>{{ formatar_nome_salmo(salmo.filename) }}</strong>
+          <div class="audio-player">
+            <audio controls style="width: 100%;">
+              <source src="{{ url_for('play_salmo', filename=salmo.filename) }}" type="audio/mpeg">
+              Seu navegador não suporta áudio.
+            </audio>
           </div>
-          {% endfor %}
+          <div class="botoes-download">
+            <a href="{{ url_for('download_mp3', filename=salmo.filename) }}">⬇️ Baixar MP3</a>
+            <a href="{{ url_for('download_doc', filename=salmo.filename) }}">📄 Baixar Cifra</a>
+          </div>
         </div>
+        {% endfor %}
       </div>
       {% else %}
-      <div class="card-liturgia">
-        <h3>🎶 Salmo do Dia</h3>
-        <p><em>Nenhuma gravação disponível para este salmo.</em></p>
-      </div>
+      <p><small><em>Nenhuma gravação disponível para este salmo.</em></small></p>
       {% endif %}
+    </div>
 
     <div class="card-liturgia">
       <h3>✠ Evangelho</h3>

@@ -5,65 +5,111 @@
   <title>{{ titulo }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <style>
+    body.page-body {
+      background: #faf7f1;
+      font-family: "Georgia", serif;
+      color: #4a3820;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0 1rem;
+    }
+    .container.my-5 {
+      max-width: 900px;
+      margin: 3rem auto 4rem auto;
+      background: #fffef8;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+      padding: 2rem 3rem;
+      border-left: 6px solid #d4af37;
+    }
+    /* Título principal */
+    .titulo-dia {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #6a4f28;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-family: "Times New Roman", serif;
+      text-shadow: 1px 1px 2px #bfa036;
+    }
+    .subtitulo {
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #7f6b3b;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+    /* Cards das leituras e orações */
     .card-liturgia {
       margin-bottom: 2rem;
       border-left: 5px solid #d4af37;
       background-color: #fffef8;
       padding: 1.5rem;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 1.2rem;
       line-height: 1.6;
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.15);
+      transition: box-shadow 0.3s ease;
+    }
+    .card-liturgia:hover {
+      box-shadow: 0 0 18px rgba(212, 175, 55, 0.35);
     }
     .card-liturgia h3 {
       color: #4a3820;
-      font-weight: bold;
-      font-size: 1.5rem;
+      font-weight: 900;
+      font-size: 1.6rem;
+      margin-bottom: 0.8rem;
+      font-family: "Georgia", serif;
+      text-shadow: 0 0 4px #bfa036;
     }
-    .titulo-dia {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #6a4f28;
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    .subtitulo {
-      font-style: italic;
-      text-align: center;
-      margin-bottom: 1rem;
-      color: #555;
-    }
+    /* Link voltar */
     .back-link {
       display: inline-block;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
       color: #4a3820;
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 700;
+      font-size: 1.1rem;
+      font-family: "Georgia", serif;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.3s ease;
     }
     .back-link:hover {
-      text-decoration: underline;
+      border-color: #d4af37;
+      text-decoration: none;
     }
-    .audio-player {
-      margin: 1rem auto;
-      max-width: 600px;
-      text-align: center;
+    /* Player de áudio estilizado */
+    .audio-player audio {
+      width: 100%;
+      border-radius: 12px;
+      outline: none;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+      cursor: pointer;
+      transition: box-shadow 0.3s ease;
     }
-    .mt-3 {
-      margin-top: 1rem;
+    .audio-player audio:hover,
+    .audio-player audio:focus {
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.8);
     }
-    /* Estilo para lista de áudios */
+    /* Lista de áudios */
     .lista-audios {
       margin: 1rem 0;
     }
     .item-audio {
       margin-bottom: 1.5rem;
-      padding: 0.8rem;
+      padding: 0.8rem 1rem;
       border: 1px solid #e0d8c8;
-      border-radius: 8px;
+      border-radius: 12px;
       background-color: #fffef8;
+      box-shadow: inset 0 0 5px rgba(212,175,55,0.1);
     }
     .item-audio strong {
       display: block;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
+      font-family: "Georgia", serif;
+      color: #6a4f28;
+      font-weight: 700;
     }
     .botoes-download {
       margin-top: 0.5rem;
@@ -73,6 +119,7 @@
       margin-right: 1rem;
       color: #8B4513;
       text-decoration: none;
+      font-weight: 600;
     }
     .botoes-download a:last-child {
       margin-right: 0;
@@ -80,64 +127,260 @@
     .botoes-download a:hover {
       text-decoration: underline;
     }
+    /* Alerta API */
+    .alerta-api {
+      max-width: 720px;
+      margin: 1rem auto 2rem auto;
+      padding: 1rem 1.5rem;
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 12px;
+      color: #856404;
+      font-weight: 600;
+      text-align: center;
+      font-family: "Georgia", serif;
+      box-shadow: 0 0 10px rgba(212,175,55,0.4);
+    }
+    /* Calendário integrado */
+    .calendario-container {
+      background: rgba(255, 215, 0, 0.12);
+      border: 2px solid #d4af37;
+      border-radius: 16px;
+      padding: 20px 25px;
+      max-width: 480px;
+      margin: 40px auto 20px auto;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
+      font-family: "Georgia", serif;
+    }
+    .calendario-container h2 {
+      color: goldenrod;
+      font-weight: 900;
+      margin-bottom: 20px;
+      font-size: 1.7rem;
+      text-shadow: 0 0 5px #bfa036;
+    }
+    .calendario-container input[type="date"] {
+      padding: 12px 15px;
+      border: 2px solid #d4af37;
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.95);
+      font-size: 1.1rem;
+      color: #4a3820;
+      width: 65%;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+      font-family: "Georgia", serif;
+    }
+    .calendario-container input[type="date"]:focus {
+      border-color: goldenrod;
+      outline: none;
+      box-shadow: 0 0 10px rgba(212,175,55,0.6);
+    }
+    .calendario-container button {
+      margin-left: 12px;
+      padding: 12px 25px;
+      background-color: goldenrod;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      color: white;
+      font-weight: 900;
+      font-size: 1.1rem;
+      font-family: "Georgia", serif;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 0 10px #bfa036;
+    }
+    .calendario-container button:hover {
+      background-color: #bfa036;
+      box-shadow: 0 0 18px #d4af37;
+    }
+    /* Botão principal para abrir modal */
+    #btnOpenModal {
+      background-color: goldenrod;
+      color: white;
+      font-weight: 900;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: "Georgia", serif;
+      font-size: 1.3rem;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      display: block;
+      margin: 3rem auto 2rem auto;
+      max-width: 320px;
+    }
+    #btnOpenModal:hover {
+      background-color: #bfa036;
+      box-shadow: 0 0 22px rgba(212, 175, 55, 0.9);
+    }
+    /* Modal */
+    #modalCalendario {
+      display:none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.4);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      font-family: "Georgia", serif;
+    }
+    #modalCalendario > div {
+      background-color: #fffef8;
+      border: 3px solid goldenrod;
+      border-radius: 16px;
+      padding: 25px 35px;
+      max-width: 360px;
+      margin: auto;
+      box-shadow: 0 0 20px rgba(218,165,32,0.7);
+      text-align: center;
+      color: #4a3820;
+    }
+    #modalCalendario h2 {
+      color: goldenrod;
+      margin-bottom: 1.2rem;
+      font-weight: 900;
+      font-size: 1.8rem;
+      text-shadow: 0 0 7px #bfa036;
+    }
+    #modalCalendario input[type="date"] {
+      padding: 12px;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      border: 2px solid goldenrod;
+      margin-bottom: 1.4rem;
+      width: 100%;
+      box-sizing: border-box;
+      color: #4a3820;
+      font-family: "Georgia", serif;
+      transition: border-color 0.3s ease;
+    }
+    #modalCalendario input[type="date"]:focus {
+      border-color: #bfa036;
+      outline: none;
+      box-shadow: 0 0 15px rgba(212,175,55,0.8);
+    }
+    #modalCalendario button {
+      background-color: goldenrod;
+      color: white;
+      font-weight: 900;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1.2rem;
+      font-family: "Georgia", serif;
+      box-shadow: 0 0 15px #bfa036;
+      transition: background-color 0.3s ease;
+    }
+    #modalCalendario button:hover {
+      background-color: #bfa036;
+      box-shadow: 0 0 22px #d4af37;
+    }
+    #btnCloseModal {
+      background: none;
+      border: none;
+      color: #8B4513;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 1rem;
+      text-decoration: underline;
+      font-family: "Georgia", serif;
+    }
+    #btnCloseModal:hover {
+      color: #6a4f28;
+    }
+    .imagem-cristo {
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .imagem-cristo img {
+      max-width: 200px;
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.6);
+      border: 3px solid gold;
+    }
+    .titulo-liturgia {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #6a4f28;
+      margin: 1.5rem 0;
+      font-family: "Georgia", serif;
+      display: none;
+    }
   </style>
 </head>
 <body class="page-body">
   <div class="container my-5">
-    <div class="icon">
+    {% if api_falhou %}
+    <div class="alerta-api" role="alert" aria-live="assertive">
+      ⚠️ Não foi possível carregar os dados litúrgicos para esta data. Exibindo conteúdo padrão.
+    </div>
+    {% endif %}
+    
+    <!-- Imagem centralizada do Cristo Pantocrator -->
+    <div class="imagem-cristo">
       <img src="{{ url_for('static', filename='img/cristo_pantocrator.jpg') }}" alt="Cristo Pantocrator" />
     </div>
-
+    
+    <!-- Título abaixo da imagem -->
+    <div class="titulo-liturgia">Liturgia Diária</div>
+    
+    <!-- Títulos do dia e cor litúrgica -->
     <div class="titulo-dia">{{ titulo }}</div>
     <div class="subtitulo">Cor Litúrgica: {{ cor }} — {{ data }}</div>
-
-    {% if antifonas.entrada %}
-    <div class="card-liturgia">
+    
+    {% if antifona_entrada %}
+    <div class="card-liturgia" role="region" aria-label="Antífona de Entrada">
       <h3>🔸 Antífona de Entrada</h3>
-      <p>{{ antifonas.entrada }}</p>
+      <p>{{ antifona_entrada }}</p>
     </div>
     {% endif %}
-
-    <div class="card-liturgia">
+    
+    <div class="card-liturgia" role="region" aria-label="Oração do Dia">
       <h3>🙏 Oração do Dia</h3>
-      <p>{{ dia }}</p>
+      <p>{{ oracao_dia }}</p>
     </div>
-
-    <div class="card-liturgia">
+    
+    <div class="card-liturgia" role="region" aria-label="Primeira Leitura">
       <h3>📖 Primeira Leitura</h3>
-      <p><strong>{{ primeiraLeitura.referencia }}</strong> – {{ primeiraLeitura.titulo }}</p>
-      <p>{{ primeiraLeitura.texto }}</p>
+      <p>{{ primeira_leitura | safe }}</p>
     </div>
-
-    {% if segundaLeitura and "Não há" not in segundaLeitura %}
-    <div class="card-liturgia">
+    
+    {% if segunda_leitura and "Não há" not in segunda_leitura %}
+    <div class="card-liturgia" role="region" aria-label="Segunda Leitura">
       <h3>📘 Segunda Leitura</h3>
-      <p>{{ segundaLeitura }}</p>
+      <p>{{ segunda_leitura }}</p>
     </div>
     {% endif %}
-
-    <div class="card-liturgia">
+    
+    <div class="card-liturgia" role="region" aria-label="Salmo Responsorial do Dia">
       <h3>🎶 Salmo Responsorial do Dia</h3>
       <p><strong>{{ salmo.referencia }}</strong></p>
+      {% if salmo.refrao %}
       <p><em>Refrão: {{ salmo.refrao }}</em></p>
-      <p>{{ salmo.texto.replace('—', '<br>—') | safe }}</p>
-
-      <!-- === PLAYER DE SALMOS DO DIA (MÚLTIPLAS VERSÕES) === -->
+      {% endif %}
+      <p>{{ salmo.texto | replace('—', '<br>—') | safe }}</p>
       {% if salmos_do_dia %}
       <div class="lista-audios">
         <p><small>🔊 Clique para ouvir e escolher a versão:</small></p>
-        {% for salmo in salmos_do_dia %}
+        {% for salmo_audio in salmos_do_dia %}
         <div class="item-audio">
-          <strong>{{ formatar_nome_salmo(salmo.filename) }}</strong>
+          <strong>{{ formatar_nome_salmo(salmo_audio.filename) }}</strong>
           <div class="audio-player">
-            <audio controls style="width: 100%;">
-              <source src="{{ url_for('play_salmo', filename=salmo.filename) }}" type="audio/mpeg">
+            <audio controls preload="none" style="border-radius: 12px;">
+              <source src="{{ url_for('play_salmo', filename=salmo_audio.filename) }}" type="audio/mpeg" />
               Seu navegador não suporta áudio.
             </audio>
           </div>
-          <div class="botoes-download">
-            <a href="{{ url_for('download_mp3', filename=salmo.filename) }}">⬇️ Baixar MP3</a>
-            <a href="{{ url_for('download_doc', filename=salmo.filename) }}">📄 Baixar Cifra</a>
+          <div class="botoes-download" role="group" aria-label="Botões para baixar áudio e cifra">
+            <a href="{{ url_for('download_mp3', filename=salmo_audio.filename) }}">⬇️ Baixar MP3</a>
+            <a href="{{ url_for('download_doc', filename=salmo_audio.filename) }}">📄 Baixar Cifra</a>
           </div>
         </div>
         {% endfor %}
@@ -146,31 +389,90 @@
       <p><small><em>Nenhuma gravação disponível para este salmo.</em></small></p>
       {% endif %}
     </div>
-
-    <div class="card-liturgia">
+    
+    <div class="card-liturgia" role="region" aria-label="Evangelho">
       <h3>✠ Evangelho</h3>
-      <p><strong>{{ evangelho.referencia }}</strong> – {{ evangelho.titulo }}</p>
-      <p>{{ evangelho.texto }}</p>
+      <p>{{ evangelho | safe }}</p>
     </div>
-
-    <div class="card-liturgia">
+    
+    <div class="card-liturgia" role="region" aria-label="Ofertório">
       <h3>🕊️ Ofertório</h3>
       <p>{{ oferendas }}</p>
     </div>
-
-    <div class="card-liturgia">
+    
+    <div class="card-liturgia" role="region" aria-label="Comunhão">
       <h3>💟 Comunhão</h3>
       <p>{{ comunhao }}</p>
     </div>
-
-    {% if antifonas.comunhao %}
-    <div class="card-liturgia">
+    
+    {% if antifona_comunhao %}
+    <div class="card-liturgia" role="region" aria-label="Antífona de Comunhão">
       <h3>🎶 Antífona de Comunhão</h3>
-      <p>{{ antifonas.comunhao }}</p>
+      <p>{{ antifona_comunhao }}</p>
     </div>
     {% endif %}
-
-    <a href="/" class="back-link">← Voltar</a>
+    
+    <a href="/" class="back-link" aria-label="Voltar para a página inicial">← Voltar</a>
+    
+    <!-- Calendário no final da página -->
+    <div class="calendario-container" aria-label="Calendário litúrgico para consulta direta">
+      <h2>📅 Consultar outra data litúrgica</h2>
+      <input type="date" id="data_liturgia" value="{{ data|replace('/', '-') }}" aria-label="Selecione a data litúrgica" />
+      <button onclick="buscarLiturgia()" aria-label="Buscar liturgia da data selecionada">Buscar</button>
+    </div>
+    <script>
+      function buscarLiturgia() {
+        const data = document.getElementById('data_liturgia').value;
+        if (data) {
+          window.location.href = `/liturgia?data=${data}`;
+        }
+      }
+    </script>
   </div>
+  
+  <!-- Modal oculto inicialmente -->
+  <div id="modalCalendario" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+    <div>
+      <h2 id="modalTitle">📅 Selecione a data litúrgica</h2>
+      <input type="date" id="data_liturgia_modal" aria-label="Selecionar data litúrgica no modal" />
+      <button onclick="buscarLiturgiaModal()" aria-label="Buscar liturgia da data selecionada no modal">Buscar</button>
+      <button id="btnCloseModal" aria-label="Fechar modal">Fechar</button>
+    </div>
+  </div>
+  
+  <script>
+    const btnOpenModal = document.getElementById('btnOpenModal');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+    const modal = document.getElementById('modalCalendario');
+
+    btnOpenModal.onclick = () => {
+      modal.style.display = 'flex';
+      document.getElementById('data_liturgia_modal').value = '';
+      modal.focus();
+    };
+
+    if (btnCloseModal) {
+      btnCloseModal.onclick = () => {
+        modal.style.display = 'none';
+      };
+    }
+
+    if (modal) {
+      window.onclick = (event) => {
+        if(event.target === modal) {
+          modal.style.display = 'none';
+        }
+      };
+    }
+
+    function buscarLiturgiaModal() {
+      const data = document.getElementById('data_liturgia_modal').value;
+      if (data) {
+        window.location.href = `/liturgia?data=${data}`;
+      } else {
+        alert('Por favor, selecione uma data.');
+      }
+    }
+  </script>
 </body>
 </html>
